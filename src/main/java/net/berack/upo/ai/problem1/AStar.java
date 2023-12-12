@@ -94,7 +94,7 @@ public class AStar<State, Action> {
 
         NodeState found = null;
         var list = new PriorityQueue<NodeState>();
-        list.add(new NodeState(null, initial, null, 0));
+        list.add(new NodeState(null, initial, null, 0, 0));
 
         while(list.size() > 0) {
             var current = list.poll();
@@ -106,19 +106,20 @@ public class AStar<State, Action> {
             for(var action : this.actions.apply(current.state)) try {
 
                 var next = this.transition.apply(current.state, action);
-
                 var cost = this.cost.apply(current.state, next, action);
                 var dist = this.heuristic.apply(next, goal);
 
-                list.add(new NodeState(current, next, action, current.cost + cost + dist));
+                list.add(new NodeState(current, next, action, current.cost + cost, dist));
 
-            } catch (Exception ignore) {}
+            } catch (Exception ignore) {
+                ignore.printStackTrace();
+            }
         }
 
         if(found == null) return null;
 
         var path = new ArrayList<Action>();
-        while(found != null) {
+        while(found != null && found.action != null) {
             path.add(found.action);
             found = found.parent;
         }
@@ -136,17 +137,19 @@ public class AStar<State, Action> {
         State state;
         Action action;
         int cost;
+        int total;
 
-        NodeState(NodeState parent, State state, Action action, int cost) {
+        NodeState(NodeState parent, State state, Action action, int cost, int heuristic) {
             this.parent = parent;
             this.state = state;
             this.action = action;
             this.cost = cost;
+            this.total = cost + heuristic;
         }
 
         @Override
         public int compareTo(NodeState other) {
-            return this.cost - other.cost;
+            return this.total - other.total;
         }
     }
 

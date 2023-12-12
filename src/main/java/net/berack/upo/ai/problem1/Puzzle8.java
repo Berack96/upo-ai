@@ -16,6 +16,7 @@ import java.util.Random;
  */
 public class Puzzle8 implements Iterable<Integer> {
     public static final int LENGTH = 3;
+    public static final int[] DEFAULT_GOAL = new int[] {1, 2, 3, 4, 5, 6, 7, 8, 0};
 
     /**
      * Possibili movimenti della tessera "vuota"
@@ -34,18 +35,8 @@ public class Puzzle8 implements Iterable<Integer> {
      * Genera una nuova istanza del problema con le tessere posizionate in modo casuale.
      */
     public Puzzle8() {
-        var rand = new Random();
-        this.puzzle = new int[] {0, 1, 2, 3, 4, 5, 6, 7, 8};
-
-        for(var i = this.puzzle.length - 1; i > 0; i--) {
-            var j = rand.nextInt(i + 1);
-
-            var temp = this.puzzle[i];
-            this.puzzle[i] = this.puzzle[j];
-            this.puzzle[j] = temp;
-
-            if(this.puzzle[i] == 0) this.blank = i;
-        }
+        this.puzzle = Arrays.copyOf(DEFAULT_GOAL, DEFAULT_GOAL.length);
+        this.shuffle();
     }
 
     /**
@@ -58,7 +49,7 @@ public class Puzzle8 implements Iterable<Integer> {
      * @throws UnsupportedOperationException nel caso la mossa non sia disponibile.
      */
     public Puzzle8(Puzzle8 original, Move move) {
-        this.puzzle = Arrays.copyOf(original.puzzle, this.puzzle.length);
+        this.puzzle = Arrays.copyOf(original.puzzle, original.puzzle.length);
         this.blank = original.blank;
 
         this.move(move);
@@ -96,18 +87,6 @@ public class Puzzle8 implements Iterable<Integer> {
 
             if(!ok) throw new IllegalArgumentException("The input values must be UNIQUE integers between 0 and " + (LENGTH*LENGTH -1) + " inclusive");
         }
-    }
-
-
-    /**
-     * Indica la grandezza della tavoletta che contiene le tessere.
-     * Essa è una matrice 3x3.
-     * 
-     * @see #LENGTH
-     * @return la grandezza del lato della matrice
-     */
-    public int size() {
-        return LENGTH;
     }
 
     /**
@@ -195,11 +174,82 @@ public class Puzzle8 implements Iterable<Integer> {
     }
 
     /**
+     * Questo metodo mette a caso le tessere del puzzle.
+     * É possibile che, una volta che le tessere sono state spostate a caso,
+     * non siano più raggiungibili alcuni stati.
+     * 
+     * @see #isSolvable()
+     * @see #isSolvable(Puzzle8)
+     */
+    public void shuffle() {
+        var rand = new Random();
+        for(var i = this.puzzle.length - 1; i > 0; i--) {
+            var j = rand.nextInt(i + 1);
+
+            var temp = this.puzzle[i];
+            this.puzzle[i] = this.puzzle[j];
+            this.puzzle[j] = temp;
+
+            if(this.puzzle[i] == 0) this.blank = i;
+        }
+    }
+
+    /**
+     * Indica se l'istanza del puzzle corrente sia risolvibile per il caso default.
+     * Con caso default si indica il puzzle composto da {@link #DEFAULT_GOAL}
+     * 
+     * @return true nel caso si possa risolvere, false altrimenti
+     */
+    public boolean isSolvable() {
+        return this.isSolvable(new Puzzle8(DEFAULT_GOAL));
+    }
+
+    /**
+     * Metodo per controllare la risolvibilità del puzzle corrente.
+     * 
+     * @param goal lo stato a cui si vuole arrivare
+     * @return true nel caso si possa risolvere, false altrimenti
+     */
+    public boolean isSolvable(Puzzle8 goal) {
+        var n = LENGTH * LENGTH;
+        var indexGoal = new int[n];
+
+        for(var i = 0; i < n; i++)
+            indexGoal[goal.puzzle[i]] = i;
+
+        var sum = 0;
+        for(var i = 0; i < n; i++) {
+            var curr = this.puzzle[i];
+            var iGoal = indexGoal[curr];
+
+            if(curr == 0) continue;
+
+            for(var j = n - 1; j > i ; j--) {
+                var val = this.puzzle[j];
+                if(val != 0 && indexGoal[val] < iGoal) sum += 1;
+            }
+        }
+
+        return (sum % 2) == 0;
+    }
+
+    /**
+     * Usa l'algoritmo A* per la soluzione del problema.
+     * Questo metodo cercherà di raggiungere lo stato goal indicato da {@link #DEFAULT_GOAL}
+     * @return una sequenza di mosse per poter risolvere il problema o null se non risolvibile
+     */
+    public List<Move> solve() {
+        return this.solve(new Puzzle8(DEFAULT_GOAL));
+    }
+
+    /**
      * Usa l'algoritmo A* per la soluzione del problema
      * @param goal lo stato goal in cui arrivare
      * @return una sequenza di mosse per poter risolvere il problema o null se non risolvibile
      */
     public List<Move> solve(Puzzle8 goal) {
+        if(!this.isSolvable(goal)) return null;
+
         var aStar = new AStar<Puzzle8, Move>(Puzzle8::availableMoves, (p, m) -> new Puzzle8(p, m))
             .setHeuristic((p1, p2) -> {
                 var sum = 0;
@@ -219,6 +269,10 @@ public class Puzzle8 implements Iterable<Integer> {
         return aStar.solve(this, Objects.requireNonNull(goal));
     }
 
+    @Override
+    public String toString() {
+        return Arrays.toString(this.puzzle);
+    }
 
     @Override
     public boolean equals(Object obj) {
