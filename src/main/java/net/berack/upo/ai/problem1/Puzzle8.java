@@ -1,10 +1,10 @@
 package net.berack.upo.ai.problem1;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Random;
 
 /**
  * Classe utilizzata per la rappresentazione del problema delle 8 tessere.
@@ -27,18 +27,23 @@ public class Puzzle8 implements Iterable<Integer> {
         RIGHT
     }
 
-    private int[] puzzle = new int[LENGTH * LENGTH];
+    private int[] puzzle;
     private int blank = 0;
 
     /**
      * Genera una nuova istanza del problema con le tessere posizionate in modo casuale.
      */
     public Puzzle8() {
-        var values = Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8);
-        Collections.shuffle(values);
+        var rand = new Random();
+        this.puzzle = new int[] {0, 1, 2, 3, 4, 5, 6, 7, 8};
 
-        for(var i = 0; i < this.puzzle.length; i++) {
-            this.puzzle[i] = values.get(i).intValue();
+        for(var i = this.puzzle.length - 1; i > 0; i--) {
+            var j = rand.nextInt(i + 1);
+
+            var temp = this.puzzle[i];
+            this.puzzle[i] = this.puzzle[j];
+            this.puzzle[j] = temp;
+
             if(this.puzzle[i] == 0) this.blank = i;
         }
     }
@@ -53,7 +58,7 @@ public class Puzzle8 implements Iterable<Integer> {
      * @throws UnsupportedOperationException nel caso la mossa non sia disponibile.
      */
     public Puzzle8(Puzzle8 original, Move move) {
-        Arrays.copyOf(original.puzzle, this.puzzle.length);
+        this.puzzle = Arrays.copyOf(original.puzzle, this.puzzle.length);
         this.blank = original.blank;
 
         this.move(move);
@@ -75,7 +80,7 @@ public class Puzzle8 implements Iterable<Integer> {
             throw new IllegalArgumentException("The size of the array must be " + LENGTH*LENGTH);
 
         var check = new int[LENGTH * LENGTH];
-        Arrays.copyOf(values, values.length);
+        this.puzzle = Arrays.copyOf(values, values.length);
 
         for(var i = 0; i < this.puzzle.length; i++) {
             var curr = this.puzzle[i];
@@ -116,7 +121,8 @@ public class Puzzle8 implements Iterable<Integer> {
      * @return il valore della tessera nelle coordinate selezionate
      */
     public int get(int x, int y) {
-        return puzzle[x * LENGTH + y];
+        if(x >= LENGTH) throw new IndexOutOfBoundsException();
+        return puzzle[y * LENGTH + x];
     }
 
     /**
