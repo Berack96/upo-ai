@@ -21,7 +21,7 @@ public class Puzzle8 implements Iterable<Integer> {
     /**
      * Possibili movimenti della tessera "vuota"
      */
-    public enum Move {
+    public static enum Move {
         UP,
         DOWN,
         LEFT,
