@@ -2,16 +2,16 @@ package net.berack.upo.ai.problem2;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 
-import static net.berack.upo.ai.problem2.Tris.State.*;
+import static net.berack.upo.ai.problem2.Tris.Symbol.*;
 
 import org.junit.jupiter.api.Test;
 
-import net.berack.upo.ai.problem2.Tris.State;
 
 public class TestTris {
 
@@ -22,12 +22,24 @@ public class TestTris {
     }
 
     @Test
+    public void testContructor2() {
+        var tris = new Tris();
+        tris.play(0, 0);
+
+        var move = tris.availablePlays()[0];
+        var second = new Tris(tris, move);
+
+        assertFalse(second.isPlayAvailable(move.x, move.y));
+        assertEquals(VALUE_O, second.get(move.x, move.y));
+    }
+
+    @Test
     public void testPlay() {
         var tris = new Tris();
         tris.play(0, 0);
 
         var i = 0;
-        var states = new Tris.State[] {VALUE_X, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY};
+        var states = new Tris.Symbol[] {VALUE_X, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY};
         for(var state : tris) assertEquals(states[i++], state);
 
         tris.play(2, 2);
@@ -76,6 +88,8 @@ public class TestTris {
             var curr = actions[i];
             tris.play(curr.x, curr.y);
         }
+
+        assertEquals(0, tris.availablePlays().length, "The game is over, there aren't any moves left");
     }
 
     @Test
@@ -114,47 +128,47 @@ public class TestTris {
 
         // horizontal 1 line X
         var tris = new Tris();
-        assertTrue(tris.haveWinner() == State.EMPTY);
+        assertTrue(tris.haveWinner() == EMPTY);
         tris.play(1,0);
-        assertTrue(tris.haveWinner() == State.EMPTY);
+        assertTrue(tris.haveWinner() == EMPTY);
         tris.play(1,1);
-        assertTrue(tris.haveWinner() == State.EMPTY);
+        assertTrue(tris.haveWinner() == EMPTY);
         tris.play(0,0);
-        assertTrue(tris.haveWinner() == State.EMPTY);
+        assertTrue(tris.haveWinner() == EMPTY);
         tris.play(1,2);
-        assertTrue(tris.haveWinner() == State.EMPTY);
+        assertTrue(tris.haveWinner() == EMPTY);
         tris.play(2,0);
-        assertTrue(tris.haveWinner() == State.VALUE_X);
+        assertTrue(tris.haveWinner() == VALUE_X);
 
         // diagonal \ O
         tris = new Tris();
-        assertTrue(tris.haveWinner() == State.EMPTY);
+        assertTrue(tris.haveWinner() == EMPTY);
         tris.play(2,1);
-        assertTrue(tris.haveWinner() == State.EMPTY);
+        assertTrue(tris.haveWinner() == EMPTY);
         tris.play(1,1);
-        assertTrue(tris.haveWinner() == State.EMPTY);
+        assertTrue(tris.haveWinner() == EMPTY);
         tris.play(2,0);
-        assertTrue(tris.haveWinner() == State.EMPTY);
+        assertTrue(tris.haveWinner() == EMPTY);
         tris.play(2,2);
-        assertTrue(tris.haveWinner() == State.EMPTY);
+        assertTrue(tris.haveWinner() == EMPTY);
         tris.play(1,2);
-        assertTrue(tris.haveWinner() == State.EMPTY);
+        assertTrue(tris.haveWinner() == EMPTY);
         tris.play(0,0);
-        assertTrue(tris.haveWinner() == State.VALUE_O);
+        assertTrue(tris.haveWinner() == VALUE_O);
 
         // vertical 2 column X
         tris = new Tris();
-        assertTrue(tris.haveWinner() == State.EMPTY);
+        assertTrue(tris.haveWinner() == EMPTY);
         tris.play(1,0);
-        assertTrue(tris.haveWinner() == State.EMPTY);
+        assertTrue(tris.haveWinner() == EMPTY);
         tris.play(0,2);
-        assertTrue(tris.haveWinner() == State.EMPTY);
+        assertTrue(tris.haveWinner() == EMPTY);
         tris.play(1,1);
-        assertTrue(tris.haveWinner() == State.EMPTY);
+        assertTrue(tris.haveWinner() == EMPTY);
         tris.play(0,1);
-        assertTrue(tris.haveWinner() == State.EMPTY);
+        assertTrue(tris.haveWinner() == EMPTY);
         tris.play(1,2);
-        assertTrue(tris.haveWinner() == State.VALUE_X);
+        assertTrue(tris.haveWinner() == VALUE_X);
     }
 
 }
