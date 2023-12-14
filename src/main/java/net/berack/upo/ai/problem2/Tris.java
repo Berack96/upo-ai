@@ -21,7 +21,7 @@ public class Tris implements Iterable<Tris.Symbol> {
     public static class Coordinate {
         public final int x;
         public final int y;
-        private Coordinate(int x, int y) {
+        Coordinate(int x, int y) {
             this.x = x;
             this.y = y;
         }
@@ -145,6 +145,21 @@ public class Tris implements Iterable<Tris.Symbol> {
     }
 
     /**
+     * Indica se il gioco è finito.
+     * Il gioco finisce se si ha un vincitore o se non ci sono più caselle vuote.
+     * 
+     * @return vero se iol gioco è finito
+     */
+    public boolean isFinished() {
+        if(haveWinner() != EMPTY) return true;
+
+        for(var symbol : this.tris)
+            if(symbol == EMPTY)
+                return false;
+        return true;
+    }
+
+    /**
      * Indica se si ha un vincitore e restituisce chi ha vinto.
      * @return EMPTY se non c'è ancora un vincitore, altrimenti restituisci il vincitore
      */
@@ -206,6 +221,12 @@ public class Tris implements Iterable<Tris.Symbol> {
         }
 
         return builder.toString();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(!obj.getClass().isInstance(this)) return false;
+        return Arrays.equals(this.tris, ((Tris) obj).tris);
     }
 
     @Override

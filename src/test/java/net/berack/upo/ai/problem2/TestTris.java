@@ -128,47 +128,98 @@ public class TestTris {
 
         // horizontal 1 line X
         var tris = new Tris();
-        assertTrue(tris.haveWinner() == EMPTY);
+        assertEquals(EMPTY, tris.haveWinner());
+        assertFalse(tris.isFinished());
         tris.play(1,0);
-        assertTrue(tris.haveWinner() == EMPTY);
+        assertEquals(EMPTY, tris.haveWinner());
+        assertFalse(tris.isFinished());
         tris.play(1,1);
-        assertTrue(tris.haveWinner() == EMPTY);
+        assertEquals(EMPTY, tris.haveWinner());
+        assertFalse(tris.isFinished());
         tris.play(0,0);
-        assertTrue(tris.haveWinner() == EMPTY);
+        assertEquals(EMPTY, tris.haveWinner());
+        assertFalse(tris.isFinished());
         tris.play(1,2);
-        assertTrue(tris.haveWinner() == EMPTY);
+        assertEquals(EMPTY, tris.haveWinner());
+        assertFalse(tris.isFinished());
         tris.play(2,0);
-        assertTrue(tris.haveWinner() == VALUE_X);
+        assertEquals(VALUE_X, tris.haveWinner());
+        assertTrue(tris.isFinished());
 
         // diagonal \ O
         tris = new Tris();
-        assertTrue(tris.haveWinner() == EMPTY);
+        assertEquals(EMPTY, tris.haveWinner());
+        assertFalse(tris.isFinished());
         tris.play(2,1);
-        assertTrue(tris.haveWinner() == EMPTY);
+        assertEquals(EMPTY, tris.haveWinner());
+        assertFalse(tris.isFinished());
         tris.play(1,1);
-        assertTrue(tris.haveWinner() == EMPTY);
+        assertEquals(EMPTY, tris.haveWinner());
+        assertFalse(tris.isFinished());
         tris.play(2,0);
-        assertTrue(tris.haveWinner() == EMPTY);
+        assertEquals(EMPTY, tris.haveWinner());
+        assertFalse(tris.isFinished());
         tris.play(2,2);
-        assertTrue(tris.haveWinner() == EMPTY);
+        assertEquals(EMPTY, tris.haveWinner());
+        assertFalse(tris.isFinished());
         tris.play(1,2);
-        assertTrue(tris.haveWinner() == EMPTY);
+        assertEquals(EMPTY, tris.haveWinner());
+        assertFalse(tris.isFinished());
         tris.play(0,0);
-        assertTrue(tris.haveWinner() == VALUE_O);
+        assertEquals(VALUE_O, tris.haveWinner());
+        assertTrue(tris.isFinished());
 
         // vertical 2 column X
         tris = new Tris();
-        assertTrue(tris.haveWinner() == EMPTY);
+        assertEquals(EMPTY, tris.haveWinner());
+        assertFalse(tris.isFinished());
         tris.play(1,0);
-        assertTrue(tris.haveWinner() == EMPTY);
+        assertEquals(EMPTY, tris.haveWinner());
+        assertFalse(tris.isFinished());
         tris.play(0,2);
-        assertTrue(tris.haveWinner() == EMPTY);
+        assertEquals(EMPTY, tris.haveWinner());
+        assertFalse(tris.isFinished());
         tris.play(1,1);
-        assertTrue(tris.haveWinner() == EMPTY);
+        assertEquals(EMPTY, tris.haveWinner());
+        assertFalse(tris.isFinished());
         tris.play(0,1);
-        assertTrue(tris.haveWinner() == EMPTY);
+        assertEquals(EMPTY, tris.haveWinner());
+        assertFalse(tris.isFinished());
         tris.play(1,2);
-        assertTrue(tris.haveWinner() == VALUE_X);
+        assertEquals(VALUE_X, tris.haveWinner());
+        assertTrue(tris.isFinished());
+
+        // No winner
+        tris = new Tris();
+        assertEquals(EMPTY, tris.haveWinner());
+        assertFalse(tris.isFinished());
+        tris.play(0,0);
+        assertEquals(EMPTY, tris.haveWinner());
+        assertFalse(tris.isFinished());
+        tris.play(1,0);
+        assertEquals(EMPTY, tris.haveWinner());
+        assertFalse(tris.isFinished());
+        tris.play(2,0);
+        assertEquals(EMPTY, tris.haveWinner());
+        assertFalse(tris.isFinished());
+        tris.play(1,1);
+        assertEquals(EMPTY, tris.haveWinner());
+        assertFalse(tris.isFinished());
+        tris.play(0,1);
+        assertEquals(EMPTY, tris.haveWinner());
+        assertFalse(tris.isFinished());
+        tris.play(0,2);
+        assertEquals(EMPTY, tris.haveWinner());
+        assertFalse(tris.isFinished());
+        tris.play(2,1);
+        assertEquals(EMPTY, tris.haveWinner());
+        assertFalse(tris.isFinished());
+        tris.play(2,2);
+        assertEquals(EMPTY, tris.haveWinner());
+        assertFalse(tris.isFinished());
+        tris.play(1,2);
+        assertEquals(EMPTY, tris.haveWinner());
+        assertTrue(tris.isFinished());
     }
 
 }
