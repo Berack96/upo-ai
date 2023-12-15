@@ -11,8 +11,8 @@ import java.util.function.Function;
 /**
  * Una classe che risolve problemi utilizzando l'algoritmo A*.
  * @author Berack96
- * @param State la classe degli stati in cui si trova il problema da risolvere
- * @param Action la classe di azioni che si possono compiere da uno stato e l'altro
+ * @param State - la classe degli stati in cui si trova il problema da risolvere
+ * @param Action - la classe di azioni che si possono compiere da uno stato e l'altro
  */
 public class AStar<State, Action> {
 

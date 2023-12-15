@@ -8,9 +8,9 @@ import java.util.function.Function;
  * Algoritmo MiniMax per i giochi a due concorrenti.
  * 
  * @author Berack96
- * @param <State> la classe degli stati in cui si trova il problema da risolvere
- * @param <Action> la classe di azioni che si possono compiere da uno stato e l'altro
- * @param <Player> la classe che indica il giocatore, essa serve da dare in input alla funzione di gain
+ * @param State - la classe degli stati in cui si trova il problema da risolvere
+ * @param Action - la classe di azioni che si possono compiere da uno stato e l'altro
+ * @param Player - la classe che indica il giocatore, essa serve da dare in input alla funzione di gain
  */
 public class MiniMax<State, Action, Player> {
 
@@ -45,7 +45,7 @@ public class MiniMax<State, Action, Player> {
      * 
      * @param state lo stato corrente
      * @param player il giocatore che deve fare la mossa
-     * @param lookahead quante mosse guardare nel futuro
+     * @param lookahead quante mosse consecutive guardare nel futuro
      * @return la migliore mossa localmente
      */
     public Action next(State state, int lookahead, Player player) {
