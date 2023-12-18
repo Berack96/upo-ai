@@ -49,6 +49,12 @@ public class SmileLib {
         var net = new Network();
 
         net.readFile(RESOURCE_PATH + "VentureBN.xdsl");
+
+        var nodes = net.getAllNodes();
+        for (var i = 0; i < nodes.length; i++) {
+            System.out.println(nodes[i] + " -> " + net.getNodeId(nodes[i]));
+        }
+
         net.setEvidence("Forecast", "Moderate");
         net.updateBeliefs();
 
