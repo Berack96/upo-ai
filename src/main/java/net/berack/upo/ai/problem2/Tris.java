@@ -2,8 +2,10 @@ package net.berack.upo.ai.problem2;
 
 import static net.berack.upo.ai.problem2.Tris.Symbol.EMPTY;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * Classe che rappresenta il classico gioco del tris, dove per vincere bisogna
@@ -93,7 +95,7 @@ public class Tris implements Iterable<Tris.Symbol> {
      * @throws UnsupportedOperationException nel caso in cui si ha già avuto un vincitore
      */
     public void play(int x, int y) {
-        if(this.haveWinner() != Symbol.EMPTY) throw new UnsupportedOperationException("The game has already finished!");
+        if(this.getWinner() != Symbol.EMPTY) throw new UnsupportedOperationException("The game has already finished!");
         if(!isPlayAvailable(x, y)) throw new IllegalArgumentException("The state to modify must be Empty!");
 
         this.tris[this.index(x, y)] = this.currentTurn;
@@ -126,7 +128,7 @@ public class Tris implements Iterable<Tris.Symbol> {
      * @return un array di coordinate disponibili per giocare.
      */
     public Coordinate[] availablePlays() {
-        if(this.haveWinner() != EMPTY) return new Coordinate[0];
+        if(this.getWinner() != EMPTY) return new Coordinate[0];
 
         var count = 0;
         for(var i = 0; i < this.tris.length; i++)
@@ -148,10 +150,10 @@ public class Tris implements Iterable<Tris.Symbol> {
      * Indica se il gioco è finito.
      * Il gioco finisce se si ha un vincitore o se non ci sono più caselle vuote.
      * 
-     * @return vero se iol gioco è finito
+     * @return vero se il gioco è finito
      */
     public boolean isFinished() {
-        if(haveWinner() != EMPTY) return true;
+        if(this.checkTris() != null) return true;
 
         for(var symbol : this.tris)
             if(symbol == EMPTY)
@@ -160,34 +162,65 @@ public class Tris implements Iterable<Tris.Symbol> {
     }
 
     /**
+     * Se si ha un vincitore restiruisce le coordinate delle celle in cui si ha tris.
+     * @return le coordinate delle celle del tris o null se non si ha ancora un vincitore.
+     */
+    public List<int[]> getWinnerTris() {
+        var list = this.checkTris();
+        if(list == null) return null;
+
+        var coord = new ArrayList<int[]>();
+        for(var index : list) {
+            coord.add(new int[] {
+                index % Tris.LENGTH,
+                index / Tris.LENGTH
+            });
+        }
+        return coord;
+    }
+
+    /**
      * Indica se si ha un vincitore e restituisce chi ha vinto.
      * @return EMPTY se non c'è ancora un vincitore, altrimenti restituisci il vincitore
      */
-    public Symbol haveWinner() {
-        // top left corner -> horizontal and vertical
-        var state = this.tris[0];
-        if(state != Symbol.EMPTY) {
-            if(this.tris[1] == state && this.tris[2] == state) return state;
-            if(this.tris[3] == state && this.tris[6] == state) return state;
+    public Symbol getWinner() {
+        var check = this.checkTris();
+        if(check == null) return EMPTY;
+        return tris[check[0]];
+    }
+
+    /**
+     * Funzione privata per il controllo del tris.
+     * Nel caso ci sia un tris questo metodo restituisce il valore
+     * degli indici di dove si trova.
+     * 
+     * @return un array degli indici del tris, altrimenti null;
+     */
+    private int[] checkTris() {
+        var possibleTris = new int[][] {
+            // top left corner -> horizontal and vertical
+            {0, 1, 2},
+            {0, 3, 6},
+            // bottom right corner -> horizontal and vertical
+            {8, 7, 6},
+            {8, 5, 2},
+            // central -> diagonals, horizontal and vertical 
+            {4, 0, 8},
+            {4, 6, 2},
+            {4, 3, 5},
+            {4, 1, 7}
+        };
+
+        for(var check : possibleTris) {
+            var symbol = this.tris[check[0]];
+
+            if(symbol == EMPTY) continue;
+            if(symbol != this.tris[check[1]]) continue;
+            if(symbol != this.tris[check[2]]) continue;
+            return check;
         }
 
-        // bottom right corner -> horizontal and vertical
-        state = this.tris[8];
-        if(state != Symbol.EMPTY) {
-            if(this.tris[7] == state && this.tris[6] == state) return state;
-            if(this.tris[5] == state && this.tris[2] == state) return state;
-        }
-
-        // central -> diagonals, horizontal and vertical 
-        state = this.tris[4];
-        if(state != Symbol.EMPTY) {
-            if(this.tris[0] == state && this.tris[8] == state) return state;
-            if(this.tris[6] == state && this.tris[2] == state) return state;
-            if(this.tris[3] == state && this.tris[5] == state) return state;
-            if(this.tris[1] == state && this.tris[7] == state) return state;
-        }
-
-        return Symbol.EMPTY;
+        return null;
     }
 
     /**
