@@ -27,6 +27,7 @@ public class TrisGUI extends JFrame {
     }
 
     /**
+     * Caricamento statico delle immagini
      */
     private static final ImageIcon IMAGE_X;
     private static final ImageIcon IMAGE_O;
@@ -48,8 +49,14 @@ public class TrisGUI extends JFrame {
     private JCheckBoxMenuItem aiFirst;
 
     /**
+     * Crea una nuova istanza del gioco sottoforma di finestra.
+     * In essa si potrà giocare premendo sulla zona in cui si vuole mettere il proprio simbolo.
+     * Inoltre ci saranno sarà una menubar con delle opzioni tra le quali
+     * il resettare il gioco e la possibilità di far giocar una AI.
+     * 
+     * Come default viene abilitata la AI come secondo giocatore.
      */
-    private TrisGUI() {
+    public TrisGUI() {
         super("Tris");
 
         var grid = new GridLayout(Tris.LENGTH, Tris.LENGTH);
@@ -101,6 +108,7 @@ public class TrisGUI extends JFrame {
     }
 
     /**
+     * Resetta il gioco e ne crea uno vuoto
      */
     public void reset() {
         this.tris = new Tris();
@@ -111,9 +119,7 @@ public class TrisGUI extends JFrame {
 
     /**
      * Dopo questo metodo la finestra verrà ridisegnata (sempre se ci sono stati dei cambiamenti)
-     * Nel caso in cui sia stata precedentemente calcolata la soluzione,
-     * allora verrà evidenziata una tessera con il colore rosso per indicare
-     * la mossa migliore da fare per la risoluzione.
+     * Nel caso in cui ci sia un vincitore il tris verrà colorato di rosso
      */
     public void redraw() {
         for(var arr: this.buttons) {
@@ -163,7 +169,7 @@ public class TrisGUI extends JFrame {
             this.addActionListener(action -> {
                 if(tris.isPlayAvailable(x, y) && !tris.isFinished()) {
                     tris.play(x, y);
-                    if(ai != null) ai.playNext();
+                    if(ai != null && !tris.isFinished()) ai.playNext();
                     redraw();
                 }
             });

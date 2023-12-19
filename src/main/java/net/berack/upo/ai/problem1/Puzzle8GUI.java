@@ -45,11 +45,11 @@ public class Puzzle8GUI extends JFrame {
      * Crea una nuova istanza del gioco sottoforma di finestra.
      * In essa si potrà giocare muovendo le tessere al posto della tessera vuota.
      * Inoltre ci saranno sarà una menubar con delle opzioni tra le quali
-     * il mescolare le tessere e l'eveidenziazione della migliore mossa.
+     * il mescolare le tessere e l'evidenziazione della migliore mossa.
      * 
      * Come default viene creato il puzzle "GOAL" ovvero non mescolato.
      */
-    private Puzzle8GUI() {
+    public Puzzle8GUI() {
         super("Puzzle 8 game");
 
         var grid = new GridLayout(Puzzle8.LENGTH, Puzzle8.LENGTH);
