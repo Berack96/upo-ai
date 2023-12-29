@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- This network was created in GeNIe Academic, which can be used for academic teaching and research purposes only -->
+<smile version="1.0" id="WetGrass" numsamples="10000" discsamples="10000">
+	<nodes>
+		<cpt id="Cloudy">
+			<state id="Si" />
+			<state id="No" />
+			<probabilities>0.4 0.6</probabilities>
+		</cpt>
+		<cpt id="Rain">
+			<state id="True" />
+			<state id="False" />
+			<parents>Cloudy</parents>
+			<probabilities>0.7000000000000001 0.3 0.4 0.6</probabilities>
+		</cpt>
+		<cpt id="Sprinkler">
+			<state id="On" />
+			<state id="Off" />
+			<parents>Cloudy</parents>
+			<probabilities>0.1 0.9 0.5 0.5</probabilities>
+		</cpt>
+		<cpt id="Wet_grass">
+			<state id="Bagnata" />
+			<state id="Asciutta" />
+			<parents>Sprinkler Rain</parents>
+			<probabilities>0.99 0.01000000000000001 0.85 0.15 0.9 0.09999999999999998 0.1 0.9</probabilities>
+		</cpt>
+	</nodes>
+	<extensions>
+		<genie version="1.0" app="GeNIe 4.1.3402.0 ACADEMIC" name="WetGrass">
+			<node id="Cloudy">
+				<name>Cloudy</name>
+				<interior color="e5f6f7" />
+				<outline color="000080" />
+				<font color="000000" name="Arial" size="8" />
+				<position>360 82 442 143</position>
+				<barchart active="true" />
+			</node>
+			<node id="Rain">
+				<name>Rain</name>
+				<interior color="e5f6f7" />
+				<outline color="000080" />
+				<font color="000000" name="Arial" size="8" />
+				<position>508 217 583 273</position>
+				<barchart active="true" />
+			</node>
+			<node id="Sprinkler">
+				<name>Sprinkler</name>
+				<interior color="e5f6f7" />
+				<outline color="000080" />
+				<font color="000000" name="Arial" size="8" />
+				<position>214 216 305 282</position>
+				<barchart active="true" />
+			</node>
+			<node id="Wet_grass">
+				<name>Wet grass</name>
+				<interior color="e5f6f7" />
+				<outline color="000080" />
+				<font color="000000" name="Arial" size="8" />
+				<position>357 337 455 408</position>
+				<barchart active="true" />
+			</node>
+		</genie>
+	</extensions>
+</smile>

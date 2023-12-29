@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- This network was created in GeNIe Academic, which can be used for academic teaching and research purposes only -->
+<smile version="1.0" id="Malaria" numsamples="10000" discsamples="10000">
+	<nodes>
+		<cpt id="Infliuenza">
+			<state id="forte" />
+			<state id="leggera" />
+			<state id="assente" />
+			<probabilities>0.3333333333333333 0.3333333333333333 0.3333333333333334</probabilities>
+			<property id="DSL_OUTCOME_ORDER">-1</property>
+		</cpt>
+		<cpt id="Malaria">
+			<state id="presente" />
+			<state id="assente" />
+			<probabilities>0.5 0.5</probabilities>
+			<property id="DSL_OUTCOME_ORDER">-1</property>
+		</cpt>
+		<noisymax id="Febbre">
+			<state id="alta" />
+			<state id="bassa" />
+			<state id="assente" />
+			<parents>Infliuenza Malaria</parents>
+			<strengths>0 1 2 0 1</strengths>
+			<parameters>0.99 0.01 0 0.4 0.55 0.04999999999999993 0 0 1 0.999 0.001 0 0 0 1 0.01000000000000001 0.09999999999999998 0.89</parameters>
+			<property id="DSL_OUTCOME_ORDER">-1</property>
+		</noisymax>
+	</nodes>
+	<extensions>
+		<genie version="1.0" app="GeNIe 4.1.3402.0 ACADEMIC" name="Malaria">
+			<node id="Infliuenza">
+				<name>Infliuenza</name>
+				<interior color="e5f6f7" />
+				<outline color="000080" />
+				<font color="000000" name="Arial" size="14" />
+				<position>338 118 434 178</position>
+				<barchart active="true" width="179" height="104" />
+			</node>
+			<node id="Malaria">
+				<name>Malaria</name>
+				<interior color="e5f6f7" />
+				<outline color="000080" />
+				<font color="000000" name="Arial" size="14" />
+				<position>645 111 723 159</position>
+				<barchart active="true" width="177" height="78" />
+			</node>
+			<node id="Febbre">
+				<name>Febbre</name>
+				<interior color="e5f6f7" />
+				<outline color="000080" />
+				<font color="000000" name="Arial" size="14" />
+				<position>524 310 605 360</position>
+				<barchart active="true" width="183" height="110" />
+			</node>
+		</genie>
+	</extensions>
+</smile>

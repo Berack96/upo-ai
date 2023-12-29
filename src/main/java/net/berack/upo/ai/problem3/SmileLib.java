@@ -1,13 +1,24 @@
 package net.berack.upo.ai.problem3;
 
 import java.net.URLDecoder;
-
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import smile.Network;
 
+/**
+ * Classe che permette l'utilizzo della libreria SMILE di BAYESFUSION.
+ * La classe carica staticamente la libreria.dll creando la proprietà di
+ * sistema jsmile.native.library includendo la resource path di jsmile.
+ * In questo modo per utilizzare SMILE basta chiamare un metodo di questa classe
+ * per far si che la chiave di attivazione venga correttamente controllata.
+ * 
+ * @apiNote Scadenza chiave 2024-06-16
+ * @author Berack
+ */
 public class SmileLib {
 
     public static final String RESOURCE_PATH;
-
     static {
         var loader = SmileLib.class.getClassLoader();
         var wrongPath = loader.getResource("").getFile();
@@ -39,30 +50,51 @@ public class SmileLib {
         );
     }
 
+    /**
+     * Crea un Network dal file indicato
+     * Il file deve essere una risorsa del jar o un file esterno
+     * 
+     * @param file il file da cercare
+     * @return il network creato
+     */
     public static Network getNetworkFrom(String file) {
         var net = new Network();
-        net.readFile(RESOURCE_PATH + file);
+        try {
+            net.readFile(RESOURCE_PATH + file);
+        } catch (smile.SMILEException e) {
+            net.readFile(file);
+        }
+
         return net;
     }
 
-    public static void main(String[] args) throws Exception {
-        var net = new Network();
+    /**
+     * Crea una lista di nodi dal network indicato.
+     * I nodi usati sono un po' più comodi rispetto al network.
+     * La lista è ordinata in modo che il nodo 'k' sia un discendente
+     * dei nodi '0...k-1' e non di 'k+1...n'
+     * 
+     * @param net il network da cui prendere i dati
+     * @return una lista ordinata di nodi
+     */
+    public static List<NetworkNode> buildListFrom(Network net) {
+            var nodes = new HashMap<Integer, NetworkNode>();
+            var list = new ArrayList<NetworkNode>();
 
-        net.readFile(RESOURCE_PATH + "VentureBN.xdsl");
+            for(var handle : net.getAllNodes()) {
+                var node = new NetworkNode(net, handle);
+                list.add(node);
+                nodes.put(handle, node);
+            }
 
-        var nodes = net.getAllNodes();
-        for (var i = 0; i < nodes.length; i++) {
-            System.out.println(nodes[i] + " -> " + net.getNodeId(nodes[i]));
+            for(var node : nodes.values()) {
+                var parentsHandle = net.getParents(node.handle);
+                node.parents = new NetworkNode[parentsHandle.length];
+
+                for(var i = 0; i < parentsHandle.length; i++)
+                    node.parents[i] = nodes.get(parentsHandle[i]);
+            }
+
+            return list;
         }
-
-        net.setEvidence("Forecast", "Moderate");
-        net.updateBeliefs();
-
-        var beliefs = net.getNodeValue("Success");
-        for (var i = 0; i < beliefs.length; i++) {
-            System.out.println(net.getOutcomeId("Success", i) + " = " + beliefs[i]);
-        }
-
-        net.close();
-    }
 }
