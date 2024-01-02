@@ -82,17 +82,9 @@ public class SmileLib {
             var list = new ArrayList<NetworkNode>();
 
             for(var handle : net.getAllNodes()) {
-                var node = new NetworkNode(net, handle);
+                var node = new NetworkNode(net, handle, nodes);
                 list.add(node);
                 nodes.put(handle, node);
-            }
-
-            for(var node : nodes.values()) {
-                var parentsHandle = net.getParents(node.handle);
-                node.parents = new NetworkNode[parentsHandle.length];
-
-                for(var i = 0; i < parentsHandle.length; i++)
-                    node.parents[i] = nodes.get(parentsHandle[i]);
             }
 
             return list;
