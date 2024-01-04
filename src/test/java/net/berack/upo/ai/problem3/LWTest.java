@@ -8,7 +8,7 @@ import smile.Network;
 
 public class LWTest {
 
-    // 3% difference max (it is a lot but is fair)
+    // 5% difference max (it is a lot but is fair)
     public static final float DELTA = 0.05f;
 
     @Test
@@ -44,7 +44,7 @@ public class LWTest {
     }
 
     private void checkNodesValues(Network net) {
-        var lw = new LikelyhoodWeighting(net);
+        var lw = new LikelihoodWeighting(net);
 
         net.updateBeliefs();
         lw.updateNetwork(1000);

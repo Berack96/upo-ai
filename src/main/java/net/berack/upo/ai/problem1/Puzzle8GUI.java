@@ -1,19 +1,17 @@
 package net.berack.upo.ai.problem1;
 
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-
-import net.berack.upo.ai.problem1.Puzzle8.Move;
-
 import java.awt.Color;
 import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+
+import net.berack.upo.ai.MyPanel;
+import net.berack.upo.ai.problem1.Puzzle8.Move;
 
 /**
  * Classe che permette di visualizzare graficamente il gioco Puzzle8
@@ -21,11 +19,7 @@ import java.util.List;
  * 
  * @author Berack96
  */
-public class Puzzle8GUI extends JFrame {
-
-    public static void main(String[] args) {
-        new Puzzle8GUI();
-    }
+public class Puzzle8GUI extends MyPanel {
 
     /**
      * Carica staticamente le immagini necessarie per giocare al gioco
@@ -50,49 +44,20 @@ public class Puzzle8GUI extends JFrame {
      * Come default viene creato il puzzle "GOAL" ovvero non mescolato.
      */
     public Puzzle8GUI() {
-        super("Puzzle 8 game");
+        super();
 
         var grid = new GridLayout(Puzzle8.LENGTH, Puzzle8.LENGTH);
         grid.setHgap(6);
         grid.setVgap(grid.getHgap());
 
-        var panel = new JPanel(grid);
+        this.setLayout(grid);
         for(var i = 0; i < Puzzle8.LENGTH; i++) {
             for(var j = 0; j < Puzzle8.LENGTH; j++) {
                 var comp = new MyComponent(Puzzle8.LENGTH, j, i);
-                panel.add(comp);
+                this.add(comp);
                 this.buttons[j][i] = comp;
             }
         }
-
-        this.add(panel);
-        this.attachMenu();
-
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.pack();
-        this.setResizable(false);
-        this.setLocationRelativeTo(null);
-        this.setVisible(true);
-    }
-
-    /**
-     * Metodo utile per non mettere tutto nel costruttore.
-     * Qui viene creata la menubar
-     */
-    private void attachMenu() {
-        var menuBar = new JMenuBar();
-
-        var menu1 = new JMenu("Game");
-        var item1 = new JMenuItem("Shuffle");
-        item1.addActionListener(action -> this.shuffleGame());
-        menu1.add(item1);
-
-        var item2 = new JMenuItem("Show solution");
-        item2.addActionListener(action -> this.solveGame());
-        menu1.add(item2);
-
-        menuBar.add(menu1);
-        this.setJMenuBar(menuBar);
     }
 
     /**
@@ -193,5 +158,19 @@ public class Puzzle8GUI extends JFrame {
                 redraw();
             });
         }
+    }
+
+    @Override
+    public JMenu getMenu() {
+        var menu = new JMenu("Game");
+        var item1 = new JMenuItem("Shuffle");
+        item1.addActionListener(action -> this.shuffleGame());
+        menu.add(item1);
+
+        var item2 = new JMenuItem("Show solution");
+        item2.addActionListener(action -> this.solveGame());
+        menu.add(item2);
+
+        return menu;
     }
 }

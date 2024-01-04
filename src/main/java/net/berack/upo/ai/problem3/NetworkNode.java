@@ -16,6 +16,7 @@ import smile.Network;
 public class NetworkNode {
 
     final int handle;
+    final String name;
     final String[] outcomes;
     final double[] definition;
     final int evidence;
@@ -36,12 +37,16 @@ public class NetworkNode {
     NetworkNode(Network net, int handle, Map<Integer, NetworkNode> nodes) {
         this.handle = handle;
         this.type = net.getNodeType(handle);
+        this.name = net.getNodeId(handle);
         this.net = net;
 
         this.outcomes = net.getOutcomeIds(handle);
         this.values = new double[this.outcomes.length];
         this.evidence = net.isEvidence(handle)? net.getEvidence(handle) : -1;
-        if(this.isEvidence()) this.values[this.evidence] = 1.0d;
+        if(this.isEvidence()) {
+            this.values[this.evidence] = 1.0d;
+            this.sample = this.evidence;
+        }
 
         var parentsHandle = net.getParents(handle);
         this.parents = new NetworkNode[parentsHandle.length];
@@ -111,11 +116,10 @@ public class NetworkNode {
         var tot = this.definition.length;
 
         for(var p : this.parents) {
-            var pIndex = p.isEvidence()? p.evidence : p.sample;
-            if(pIndex < 0) throw new IllegalArgumentException("Parent"); // in theory impossible since Topological sorted
+            if(p.sample < 0) throw new IllegalArgumentException("Parent"); // in theory impossible since Topological sorted
 
             tot /= p.outcomes.length;
-            init += tot * pIndex;
+            init += tot * p.sample;
         }
 
         return init;
@@ -131,5 +135,10 @@ public class NetworkNode {
         if(!Arrays.equals(this.definition, other.definition)) return false;
 
         return true;
+    }
+
+    @Override
+    public String toString() {
+        return this.net.getNodeId(this.handle) + "->" + Arrays.toString(this.values);
     }
 }

@@ -1,9 +1,11 @@
 package net.berack.upo.ai.problem3;
 
-import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
 import smile.Network;
 
 /**
@@ -18,18 +20,19 @@ import smile.Network;
  */
 public class SmileLib {
 
-    public static final String RESOURCE_PATH;
     static {
-        var loader = SmileLib.class.getClassLoader();
-        var wrongPath = loader.getResource("").getFile();
-        var path = wrongPath.substring(1);
         try {
-            RESOURCE_PATH = URLDecoder.decode(path, "ASCII");
+            var jsmile = "jsmile";
+            var loader = SmileLib.class.getClassLoader();
+            var resource = loader.getResource(jsmile);
+            var uri = resource.toURI();
+            var path = Path.of(uri).toString();
+            System.setProperty("jsmile.native.library", path);
         } catch (Exception e) {
-            throw new RuntimeException("Decodification of path failed!\n" + e.getMessage());
+            e.printStackTrace();
+            System.exit(0);
         }
 
-        System.setProperty("jsmile.native.library", RESOURCE_PATH + "jsmile");
         new smile.License(
             "SMILE LICENSE 02a07eb5 5c5fa64a 2a276459 " +
             "THIS IS AN ACADEMIC LICENSE AND CAN BE USED " +
@@ -60,8 +63,12 @@ public class SmileLib {
     public static Network getNetworkFrom(String file) {
         var net = new Network();
         try {
-            net.readFile(RESOURCE_PATH + file);
-        } catch (smile.SMILEException e) {
+            var loader = SmileLib.class.getClassLoader();
+            var in = loader.getResourceAsStream(file);
+            var str = new String(in.readAllBytes(), StandardCharsets.UTF_8);
+
+            net.readString(str);
+        } catch (Exception e) {
             net.readFile(file);
         }
 
@@ -78,15 +85,15 @@ public class SmileLib {
      * @return una lista ordinata di nodi
      */
     public static List<NetworkNode> buildListFrom(Network net) {
-            var nodes = new HashMap<Integer, NetworkNode>();
-            var list = new ArrayList<NetworkNode>();
+        var nodes = new HashMap<Integer, NetworkNode>();
+        var list = new ArrayList<NetworkNode>();
 
-            for(var handle : net.getAllNodes()) {
-                var node = new NetworkNode(net, handle, nodes);
-                list.add(node);
-                nodes.put(handle, node);
-            }
-
-            return list;
+        for(var handle : net.getAllNodes()) {
+            var node = new NetworkNode(net, handle, nodes);
+            list.add(node);
+            nodes.put(handle, node);
         }
+
+        return list;
+    }
 }

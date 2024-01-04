@@ -1,18 +1,17 @@
 package net.berack.upo.ai.problem2;
 
+import java.awt.Color;
+import java.awt.GridLayout;
+
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JFrame;
 import javax.swing.JMenu;
-import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JPanel;
 import javax.swing.JSeparator;
 
-import java.awt.Color;
-import java.awt.GridLayout;
+import net.berack.upo.ai.MyPanel;
 
 /**
  * Classe che permette di visualizzare graficamente il gioco Tris
@@ -20,11 +19,7 @@ import java.awt.GridLayout;
  * 
  * @author Berack96
  */
-public class TrisGUI extends JFrame {
-
-    public static void main(String[] args) {
-        new TrisGUI();
-    }
+public class TrisGUI extends MyPanel {
 
     /**
      * Caricamento statico delle immagini
@@ -57,54 +52,17 @@ public class TrisGUI extends JFrame {
      * Come default viene abilitata la AI come secondo giocatore.
      */
     public TrisGUI() {
-        super("Tris");
+        super();
 
         var grid = new GridLayout(Tris.LENGTH, Tris.LENGTH);
-        var panel = new JPanel(grid);
+        this.setLayout(grid);
         for(var i = 0; i < Tris.LENGTH; i++) {
             for(var j = 0; j < Tris.LENGTH; j++) {
                 var comp = new MyComponent(Tris.LENGTH, j, i);
-                panel.add(comp);
+                this.add(comp);
                 this.buttons[j][i] = comp;
             }
         }
-
-        this.add(panel);
-        this.attachMenu();
-
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.pack();
-        this.setResizable(false);
-        this.setLocationRelativeTo(null);
-        this.setVisible(true);
-    }
-
-    /**
-     * Metodo utile per non mettere tutto nel costruttore.
-     * Qui viene creata la menubar
-     */
-    private void attachMenu() {
-        var menuBar = new JMenuBar();
-
-        var menu1 = new JMenu("Game");
-        var item1 = new JMenuItem("Reset");
-        item1.addActionListener(action -> this.reset());
-        menu1.add(item1);
-
-        var separator = new JSeparator();
-        menu1.add(separator);
-
-        var item2 = new JCheckBoxMenuItem("AI Enabled");
-        item2.setSelected(this.ai != null);
-        item2.addChangeListener(action -> this.ai = item2.getState()? new TrisAi(this.tris):null);
-        menu1.add(item2);
-
-        this.aiFirst = new JCheckBoxMenuItem("AI First");
-        this.aiFirst.setSelected(false);
-        menu1.add(this.aiFirst);
-
-        menuBar.add(menu1);
-        this.setJMenuBar(menuBar);
     }
 
     /**
@@ -174,5 +132,27 @@ public class TrisGUI extends JFrame {
                 }
             });
         }
+    }
+
+    @Override
+    public JMenu getMenu() {
+        var menu = new JMenu("Game");
+        var item1 = new JMenuItem("Reset");
+        item1.addActionListener(action -> this.reset());
+        menu.add(item1);
+
+        var separator = new JSeparator();
+        menu.add(separator);
+
+        var item2 = new JCheckBoxMenuItem("AI Enabled");
+        item2.setSelected(this.ai != null);
+        item2.addChangeListener(action -> this.ai = item2.getState()? new TrisAi(this.tris):null);
+        menu.add(item2);
+
+        this.aiFirst = new JCheckBoxMenuItem("AI First");
+        this.aiFirst.setSelected(false);
+        menu.add(this.aiFirst);
+
+        return menu;
     }
 }
