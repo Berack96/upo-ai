@@ -37,7 +37,7 @@ public class NetworkNode {
     NetworkNode(Network net, int handle, Map<Integer, NetworkNode> nodes) {
         this.handle = handle;
         this.type = net.getNodeType(handle);
-        this.name = net.getNodeId(handle);
+        this.name = net.getNodeName(handle);
         this.net = net;
 
         this.outcomes = net.getOutcomeIds(handle);

@@ -8,6 +8,7 @@ import java.util.function.Consumer;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
@@ -26,39 +27,45 @@ public class OutcomeChartGUI extends JPanel {
         new Color(127,255,0),
     };
 
+    private JButton[] outcomes;
+    private Label[] valuesChart;
+    private JLabel[] valuesPercent;
+
     /**
      * Crea il JPanel da visualizzare a partire da un NetworkNode appropriamente inizializzato.
      * Quando verrà visualizzato, il nodo avrà il nome degli output e i suoi valori in %
      * con una barra colorata per indicare la grandezza visivamente.
      * 
-     * @param node il nodo di cui si vogliono visualizzare gli outcome
+     * @param labels i label degli output del nodo
      * @param action una azione da fare nel caso in cui venga premuto su un outcome
      */
-    public OutcomeChartGUI(NetworkNode node, Consumer<Integer> action) {
-        var labels = node.outcomes;
-        var values = node.values;
-
-        if(labels.length != values.length) throw new IllegalArgumentException("Arrays length myst be equals!");
-        this.setBorder(BorderFactory.createCompoundBorder(new EmptyBorder(1, 0, 0, 0), BorderFactory.createLineBorder(Color.GRAY)));
-
+    public OutcomeChartGUI(String[] labels, Consumer<Integer> action) {
         var layout = new GridLayout(labels.length, 2);
         this.setLayout(layout);
+        this.setBorder(BorderFactory.createCompoundBorder(new EmptyBorder(1, 0, 0, 0), BorderFactory.createLineBorder(Color.GRAY)));
+
+        this.outcomes = new JButton[labels.length];
+        this.valuesChart = new Label[labels.length];
+        this.valuesPercent = new JLabel[labels.length];
 
         for(var i = 0; i < labels.length; i++) {
-            var value = values[i] * 100;
-
             var lName = new JButton(labels[i]);
-            var lValue = new Label(String.format("% 4.2f%%", value));
+            var lValue = new JLabel();
             var barchart = new Label();
-            var size = barchart.getPreferredSize();
+
+            this.outcomes[i] = lName;
+            this.valuesChart[i] = barchart;
+            this.valuesPercent[i] = lValue;
 
             final var index = i;
             lName.setContentAreaFilled(false);
             lName.setFocusable(false);
-            lName.addActionListener(a -> action.accept(index));
-            if(node.evidence == i) lName.setForeground(Color.RED);
+            if(action == null) lName.setBorder(null);
+            else lName.addActionListener(a -> action.accept(index));
 
-            size.width = (int) (value * 1.5);
+            var size = barchart.getPreferredSize();
+            size.width = 100;
+            size.height = 100;
             barchart.setPreferredSize(size);
             barchart.setBackground(COLORS[i % COLORS.length]);
 
@@ -74,6 +81,30 @@ public class OutcomeChartGUI extends JPanel {
 
             this.add(panel1);
             this.add(panel2);
+        }
+    }
+
+    /**
+     * Modifica i valori mostrati a schermo cambiando anche la grandezza
+     * della barra indicante il valore
+     * @param values i nuovi valori da mostrare
+     * @param evidence indica l'evidenza del nodo
+     */
+    public void updateValues(double[] values, int evidence) {
+        if(this.outcomes.length != values.length) throw new IllegalArgumentException("Arrays length myst be equals!");
+
+        for(var i = 0; i < this.outcomes.length; i++) {
+            var value = values[i] * 100;
+            var barchart = this.valuesChart[i];
+
+            var size = barchart.getSize();
+            size.width = (int) (value * 1.5);
+            barchart.setSize(size);
+            barchart.setPreferredSize(size);
+
+            this.valuesPercent[i].setText(String.format("% 4.2f%%", value));
+            if(evidence == i) this.outcomes[i].setForeground(Color.RED);
+            else this.outcomes[i].setForeground(Color.BLACK);
         }
     }
 }

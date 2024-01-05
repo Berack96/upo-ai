@@ -3,14 +3,16 @@ package net.berack.upo.ai.problem3;
 import java.awt.Dimension;
 import java.awt.FileDialog;
 import java.awt.Font;
+import java.util.Collection;
 
+import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
+import javax.swing.JTextArea;
 
 import net.berack.upo.ai.MyPanel;
 
@@ -21,8 +23,9 @@ import net.berack.upo.ai.MyPanel;
 public class LikelihoodWeightingGUI extends MyPanel {
 
     private LikelihoodWeighting lw = null;
+    private OutcomeChartGUI[] chartGUI = null;
 
-    private final JPanel scroll = new JPanel();
+    private final JPanel scroll = new JPanel(); // tried using JScrollPane but nothing shows up
     private final int totalRuns = 1000;
 
     /**
@@ -61,6 +64,7 @@ public class LikelihoodWeightingGUI extends MyPanel {
         try {
             var net = SmileLib.getNetworkFrom(fileName);
             this.lw = new LikelihoodWeighting(net);
+            this.chartGUI = null;
             this.updateLW();
         } catch (Exception e) {
             e.printStackTrace();
@@ -72,8 +76,23 @@ public class LikelihoodWeightingGUI extends MyPanel {
      */
     private void updateLW() {
         this.lw.updateNetwork(totalRuns);
-
         var nodes = this.lw.getAllNodes();
+
+        if(chartGUI == null) buildPanel(nodes);
+
+        var i = 0;
+        for(var node : nodes) chartGUI[i++].updateValues(node.values, node.evidence);
+
+        this.invalidate();
+        this.validate();
+        this.repaint();
+    }
+
+    /**
+     * Crea il pannello da zero usando i nodi passati in input come valori
+     * @param nodes i nodi da mostrare
+     */
+    private void buildPanel(Collection<NetworkNode> nodes) {
         var panel = new JPanel();
         var layout = new GroupLayout(panel);
 
@@ -84,16 +103,31 @@ public class LikelihoodWeightingGUI extends MyPanel {
         var gBarch = layout.createParallelGroup();
         var vGroup = layout.createSequentialGroup();
 
+        this.chartGUI = new OutcomeChartGUI[nodes.size()];
+        var i = 0;
+
         for(var node : nodes) {
-            var label = new JLabel(node.name);
-            var barch = new OutcomeChartGUI(node, i -> {
-                if(node.evidence == i) node.net.clearEvidence(node.handle);
-                else node.net.setEvidence(node.handle, i);
+            var net = node.net;
+            var handle = node.handle;
+
+            var label = new JTextArea(node.name);
+            label.setEditable(false);
+            label.setLineWrap(true);
+            label.setWrapStyleWord(true);
+            label.setOpaque(false);
+            label.setBorder(BorderFactory.createEmptyBorder());
+
+            var barch = new OutcomeChartGUI(node.outcomes, e -> {
+                if(net.isEvidence(handle) && net.getEvidence(handle) == e)
+                    net.clearEvidence(handle);
+                else net.setEvidence(handle, e);
                 this.updateLW();
             });
+            this.chartGUI[i++] = barch;
 
             var font = label.getFont();
-            label.setFont(new Font(font.getName(), font.getStyle(), font.getSize() + 4));
+            font = new Font(font.getName(), Font.BOLD, font.getSize() + 2);
+            label.setFont(font);
 
             gLabel.addComponent(label);
             gBarch.addComponent(barch);
@@ -108,13 +142,13 @@ public class LikelihoodWeightingGUI extends MyPanel {
         layout.setVerticalGroup(vGroup);
         layout.setHorizontalGroup(hGroup);
 
+        var sizes = this.scroll.getPreferredSize();
+        sizes.height = panel.getMinimumSize().height;
+        sizes.width -= 10;
+        panel.setPreferredSize(sizes);
+
         this.scroll.removeAll();
         this.scroll.add(panel);
-        this.repaint();
-
-        this.invalidate();
-        this.validate();
-        this.repaint();
     }
 
     @Override
@@ -124,17 +158,19 @@ public class LikelihoodWeightingGUI extends MyPanel {
         var open = new JMenuItem("Open");
         open.addActionListener(action -> this.openFile());
 
-        var net1 = new JMenuItem("WetGrass net");
-        net1.addActionListener(action -> this.openFile("lw/WetGrass.xdsl"));
+        var nets = new JMenuItem[3];
+        nets[0] = new JMenuItem("Alarm net");
+        nets[0].addActionListener(action -> this.openFile("lw/Alarm.xdsl"));
 
-        var net2 = new JMenuItem("Malaria net");
-        net2.addActionListener(action -> this.openFile("lw/Malaria.xdsl"));
+        nets[1] = new JMenuItem("WetGrass net");
+        nets[1].addActionListener(action -> this.openFile("lw/WetGrass.xdsl"));
 
+        nets[2] = new JMenuItem("Malaria net");
+        nets[2].addActionListener(action -> this.openFile("lw/Malaria.xdsl"));
 
         menu.add(open);
         menu.add(new JSeparator());
-        menu.add(net1);
-        menu.add(net2);
+        for(var net : nets) menu.add(net);
 
         return menu;
     }
