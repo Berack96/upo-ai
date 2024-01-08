@@ -46,7 +46,7 @@
             </activation>
             <properties>
                 <nativeSuffix>macos</nativeSuffix>
-                <smileFile>jsmile.jnilib</smileFile>
+                <smileFile>libjsmile.jnilib</smileFile>
             </properties>
         </profile>
         <profile>
@@ -70,7 +70,7 @@
             </activation>
             <properties>
                 <nativeSuffix>linux64</nativeSuffix>
-                <smileFile>jsmile.so</smileFile>
+                <smileFile>libjsmile.so</smileFile>
             </properties>
         </profile>
     </profiles>
@@ -92,7 +92,47 @@
                             <artifactItems>
                                 <artifactItem>
                                     <groupId>com.bayesfusion</groupId>
-                                    <artifactId>jsmile-native-${nativeSuffix}</artifactId>
+                                    <artifactId>jsmile-native-win64</artifactId>
+                                    <version>${smile.version}</version>
+                                    <type>zip</type>
+                                    <overWrite>true</overWrite>
+                                    <includes>*jsmile*</includes>
+                                </artifactItem>
+                            </artifactItems>
+                            <outputDirectory>${project.basedir}/src/main/resources/</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>resource-dependencies</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>com.bayesfusion</groupId>
+                                    <artifactId>jsmile-native-macos</artifactId>
+                                    <version>${smile.version}</version>
+                                    <type>zip</type>
+                                    <overWrite>true</overWrite>
+                                    <includes>*jsmile*</includes>
+                                </artifactItem>
+                            </artifactItems>
+                            <outputDirectory>${project.basedir}/src/main/resources/</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>resource-dependencies</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>com.bayesfusion</groupId>
+                                    <artifactId>jsmile-native-linux64</artifactId>
                                     <version>${smile.version}</version>
                                     <type>zip</type>
                                     <overWrite>true</overWrite>
@@ -104,23 +144,12 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- Renaming the jsmile & make a copy to test resources -->
+            <!-- Make a copy of JSMILE to test resources -->
             <plugin>
                 <groupId>com.coderplus.maven.plugins</groupId>
                 <artifactId>copy-rename-maven-plugin</artifactId>
                 <version>1.0</version>
                 <executions>
-                    <execution>
-                        <id>rename-file</id>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>copy</goal>
-                        </goals>
-                        <configuration>
-                            <sourceFile>${project.basedir}/src/main/resources/${smileFile}</sourceFile>
-                            <destinationFile>${project.basedir}/src/main/resources/jsmile</destinationFile>
-                        </configuration>
-                    </execution>
                     <execution>
                         <id>copy-file</id>
                         <phase>compile</phase>
@@ -128,12 +157,7 @@
                             <goal>copy</goal>
                         </goals>
                         <configuration>
-                            <!-- IDK Why but using 2 files makes the loading work, so i copy them in test too -->
                             <fileSets>
-                                <fileSet>
-                                    <sourceFile>${project.basedir}/src/main/resources/jsmile</sourceFile>
-                                    <destinationFile>${project.basedir}/src/test/resources/jsmile</destinationFile>
-                                </fileSet>
                                 <fileSet>
                                     <sourceFile>${project.basedir}/src/main/resources/${smileFile}</sourceFile>
                                     <destinationFile>${project.basedir}/src/test/resources/${smileFile}</destinationFile>

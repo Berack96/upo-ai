@@ -399,4 +399,4 @@ FodyWeavers.xsd
 
 # CUSTOM
 target
-jsmile*
+*jsmile*

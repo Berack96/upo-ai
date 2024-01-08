@@ -1,6 +1,8 @@
 package net.berack.upo.ai.problem3;
 
+import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,12 +23,25 @@ import smile.Network;
 public class SmileLib {
 
     static {
+        var jsmile = jsmileLibName();
+        var loader = SmileLib.class.getClassLoader();
+        var resource = loader.getResource(jsmile);
+
         try {
-            var jsmile = "jsmile";
-            var loader = SmileLib.class.getClassLoader();
-            var resource = loader.getResource(jsmile);
             var uri = resource.toURI();
-            var path = Path.of(uri).toString();
+            var path = "";
+
+            if(uri.toString().startsWith("jar")) {
+                var tmp = System.getProperty("java.io.tmpdir");
+                var file = new File(tmp + jsmile);
+                if(!file.exists()) {
+                    var in = resource.openStream();
+                    Files.copy(in, file.toPath());
+                }
+                path = file.getAbsolutePath();
+            }
+            else path = Path.of(uri).toString();
+
             System.setProperty("jsmile.native.library", path);
         } catch (Exception e) {
             e.printStackTrace();
@@ -51,6 +66,21 @@ public class SmileLib {
                 114,-81,-56,-11,52,-32,113,91,-84,-33,105,-9,-25,-58,-16,-52
             }
         );
+    }
+
+    /**
+     * Ritorna il nome della libreria jsmile in base al sistema operativo.
+     * @return il node del file
+     */
+    private static String jsmileLibName() {
+        var os = System.getProperty("os.name").toLowerCase();
+        if(os.indexOf("win") >= 0) return "jsmile.dll";
+        if(os.indexOf("mac") >= 0) return "libjsmile.jnilib";
+        if(os.indexOf("nix") >= 0
+        || os.indexOf("nux") >= 0
+        || os.indexOf("aix") >= 0) return "libjsmile.so";
+
+        return null;
     }
 
     /**
