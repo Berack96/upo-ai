@@ -7,14 +7,16 @@ import java.util.Collection;
 
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JTextArea;
 
-import net.berack.upo.ai.MyPanel;
+import net.berack.upo.ai.gui.MyPanel;
 
 /**
  * Classe usata per far vedere il risultato di una run di lw su un network
@@ -26,7 +28,7 @@ public class LikelihoodWeightingGUI extends MyPanel {
     private OutcomeChartGUI[] chartGUI = null;
 
     private final JPanel scroll = new JPanel(); // tried using JScrollPane but nothing shows up
-    private final int totalRuns = 1000;
+    private int totalRuns = 1000;
 
     /**
      * Crea il pannello con gli elementi di default.
@@ -65,7 +67,7 @@ public class LikelihoodWeightingGUI extends MyPanel {
             var net = SmileLib.getNetworkFrom(fileName);
             this.lw = new LikelihoodWeighting(net);
             this.chartGUI = null;
-            this.updateLW();
+            this.updateAll();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -74,7 +76,10 @@ public class LikelihoodWeightingGUI extends MyPanel {
     /**
      * Esegue l'algoritmo sul network corrente e mostra i risultati
      */
-    private void updateLW() {
+    @Override
+    public void updateAll() {
+        if(this.lw == null) return;
+
         this.lw.updateNetwork(totalRuns);
         var nodes = this.lw.getAllNodes();
 
@@ -103,6 +108,20 @@ public class LikelihoodWeightingGUI extends MyPanel {
         var gBarch = layout.createParallelGroup();
         var vGroup = layout.createSequentialGroup();
 
+        var totLabel = new JLabel("Total Runs");
+        var totValue = new JComboBox<>(new Integer[] {this.totalRuns, 5 * this.totalRuns, 10 * this.totalRuns, 20 * this.totalRuns});
+        totValue.addItemListener(a -> this.totalRuns = (Integer) totValue.getSelectedItem());
+
+        var font = totLabel.getFont();
+        font = new Font(font.getName(), Font.BOLD, font.getSize() + 2);
+        totLabel.setFont(font);
+
+        gLabel.addComponent(totLabel);
+        gBarch.addComponent(totValue);
+        vGroup.addGroup(layout.createParallelGroup()
+            .addComponent(totLabel)
+            .addComponent(totValue));
+
         this.chartGUI = new OutcomeChartGUI[nodes.size()];
         var i = 0;
 
@@ -121,11 +140,11 @@ public class LikelihoodWeightingGUI extends MyPanel {
                 if(net.isEvidence(handle) && net.getEvidence(handle) == e)
                     net.clearEvidence(handle);
                 else net.setEvidence(handle, e);
-                this.updateLW();
+                this.updateAll();
             });
             this.chartGUI[i++] = barch;
 
-            var font = label.getFont();
+            font = label.getFont();
             font = new Font(font.getName(), Font.BOLD, font.getSize() + 2);
             label.setFont(font);
 

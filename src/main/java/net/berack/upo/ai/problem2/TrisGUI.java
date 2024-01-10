@@ -11,7 +11,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JSeparator;
 
-import net.berack.upo.ai.MyPanel;
+import net.berack.upo.ai.gui.MyPanel;
 
 /**
  * Classe che permette di visualizzare graficamente il gioco Tris
@@ -72,14 +72,15 @@ public class TrisGUI extends MyPanel {
         this.tris = new Tris();
         this.ai = this.ai == null? null:new TrisAi(this.tris);
         if(this.ai != null && aiFirst.getState()) this.ai.playNext();
-        redraw();
+        this.updateAll();
     }
 
     /**
      * Dopo questo metodo la finestra verrà ridisegnata (sempre se ci sono stati dei cambiamenti)
      * Nel caso in cui ci sia un vincitore il tris verrà colorato di rosso
      */
-    public void redraw() {
+    @Override
+    public void updateAll() {
         for(var arr: this.buttons) {
             for(var button: arr) {
                 var value = tris.get(button.x, button.y);
@@ -128,7 +129,7 @@ public class TrisGUI extends MyPanel {
                 if(tris.isPlayAvailable(x, y) && !tris.isFinished()) {
                     tris.play(x, y);
                     if(ai != null && !tris.isFinished()) ai.playNext();
-                    redraw();
+                    updateAll();
                 }
             });
         }

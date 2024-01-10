@@ -1,4 +1,4 @@
-package net.berack.upo.ai;
+package net.berack.upo.ai.gui;
 
 import javax.swing.JMenu;
 import javax.swing.JPanel;
@@ -17,4 +17,11 @@ public abstract class MyPanel extends JPanel {
      * @return il menu contestuale da aggiungere
      */
     abstract public JMenu getMenu();
+
+    /**
+     * Permette di fare l'update di qualunque componente interno del pannello.
+     * Questo verrà utilizzato quando il pannello verrà mostrato in modo da
+     * disegnare correttamente il pannello.
+     */
+    abstract public void updateAll();
 }

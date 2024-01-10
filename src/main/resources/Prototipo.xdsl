@@ -6,7 +6,7 @@
 			<state id="Si" />
 			<state id="No" />
 		</decision>
-		<decision id="Migliorare_la_Qualià">
+		<decision id="Migliorare_la_Qualità">
 			<state id="Si" />
 			<state id="No" />
 			<parents>Effettuare_la_Ricerca</parents>
@@ -14,7 +14,7 @@
 		<cpt id="Qualità_Prodotto">
 			<state id="Standard" />
 			<state id="Alta" />
-			<parents>Migliorare_la_Qualià</parents>
+			<parents>Migliorare_la_Qualità</parents>
 			<probabilities>0.15 0.85 0.5 0.5</probabilities>
 		</cpt>
 		<cpt id="Domanda_Mercato">
@@ -27,24 +27,25 @@
 			<utilities>-1000 0</utilities>
 		</utility>
 		<utility id="Costo_Prototipo">
-			<parents>Migliorare_la_Qualià</parents>
+			<parents>Migliorare_la_Qualità</parents>
 			<utilities>-5000 0</utilities>
 		</utility>
-		<cpt id="Profitto">
-			<state id="Nessumo" />
-			<state id="Basso" />
+		<noisymax id="Profitto">
 			<state id="Alto" />
+			<state id="Basso" />
+			<state id="Nessuno" />
 			<parents>Domanda_Mercato Qualità_Prodotto</parents>
-			<probabilities>0.99 0.008999999999999999 0.001 0.85 0.145 0.005 0.1 0.8 0.1 0.001 0.85 0.149</probabilities>
-		</cpt>
+			<strengths>1 0 1 0</strengths>
+			<parameters>0.9 0.099 0.001 0 0 1 0.7 0.27 0.03000000000000003 0 0 1 0.1 0.5 0.4</parameters>
+		</noisymax>
 		<decision id="Produzione">
 			<state id="Si" />
 			<state id="No" />
-			<parents>Migliorare_la_Qualià Effettuare_la_Ricerca</parents>
+			<parents>Migliorare_la_Qualità Effettuare_la_Ricerca</parents>
 		</decision>
-		<utility id="Valore_Profitto">
+		<utility id="Valore_Ricavo">
 			<parents>Produzione Profitto</parents>
-			<utilities>0 10000 50000 0 0 0</utilities>
+			<utilities>50000 10000 0 0 0 0</utilities>
 		</utility>
 		<cpt id="Ricerca_di_Mercato">
 			<state id="Bassa" />
@@ -56,6 +57,10 @@
 			<parents>Produzione</parents>
 			<utilities>-2500 0</utilities>
 		</utility>
+		<mau id="Valore_Profitto">
+			<parents>Costo_di_Ricerca Costo_Prototipo Costo_Produzione Valore_Ricavo</parents>
+			<weights>1 1 1 1</weights>
+		</mau>
 	</nodes>
 	<extensions>
 		<genie version="1.0" app="GeNIe 4.1.3402.0 ACADEMIC" name="Prototipo">
@@ -84,8 +89,8 @@
 				<position>209 88 290 154</position>
 				<barchart active="true" width="128" height="64" />
 			</node>
-			<node id="Migliorare_la_Qualià">
-				<name>Migliorare la Qualià</name>
+			<node id="Migliorare_la_Qualità">
+				<name>Migliorare la Qualità</name>
 				<interior color="e5f6f7" />
 				<outline color="000080" />
 				<font color="000000" name="Arial" size="8" />
@@ -105,8 +110,8 @@
 				<interior color="e5f6f7" />
 				<outline color="000080" />
 				<font color="000000" name="Arial" size="8" />
-				<position>39 216 127 262</position>
-				<barchart active="true" />
+				<position>36 216 124 262</position>
+				<barchart active="true" width="128" height="64" />
 			</node>
 			<node id="Profitto">
 				<name>Profitto</name>
@@ -116,8 +121,8 @@
 				<position>600 228 651 259</position>
 				<barchart active="true" width="128" height="72" />
 			</node>
-			<node id="Valore_Profitto">
-				<name>Valore Profitto</name>
+			<node id="Valore_Ricavo">
+				<name>Valore Ricavo</name>
 				<interior color="e5f6f7" />
 				<outline color="000080" />
 				<font color="000000" name="Arial" size="8" />
@@ -145,8 +150,16 @@
 				<interior color="e5f6f7" />
 				<outline color="000080" />
 				<font color="000000" name="Arial" size="8" />
-				<position>44 337 132 390</position>
-				<barchart active="true" />
+				<position>37 339 125 392</position>
+				<barchart active="true" width="134" height="64" />
+			</node>
+			<node id="Valore_Profitto">
+				<name>Valore Profitto</name>
+				<interior color="e5f6f7" />
+				<outline color="000080" />
+				<font color="000000" name="Arial" size="8" />
+				<position>28 458 138 539</position>
+				<barchart active="true" width="128" height="64" />
 			</node>
 		</genie>
 	</extensions>

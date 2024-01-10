@@ -57,10 +57,18 @@
 			<parents>Comando Posizione</parents>
 			<probabilities>0.9 0.05 0.04999999999999998 0.9 0.05 0.05 0.05 0.9 0.05 0.9 0.05 0.05 0.04999999999999998 0.9 0.05 0.04999999999999993 0.05 0.9 0.05 0.9 0.05 0.05 0.05 0.9 0.05 0.05 0.9</probabilities>
 		</cpt>
-		<utility id="Utilità_2" dynamic="terminal">
+		<utility id="Utilità_Finale" dynamic="terminal">
 			<parents>Posizione_Finale</parents>
 			<utilities>-100 100 -100</utilities>
 		</utility>
+		<mau id="Somma_Parziale" dynamic="plate">
+			<parents>Utilità</parents>
+			<weights>1</weights>
+		</mau>
+		<mau id="Somma_Utilità" dynamic="terminal">
+			<parents>Utilità_Finale Somma_Parziale</parents>
+			<weights>1 1</weights>
+		</mau>
 	</nodes>
 	<dynamic numslices="5">
 		<cpt id="Posizione" order="1">
@@ -83,6 +91,10 @@
 		<decision id="Comando" order="1">
 			<parents>Comando</parents>
 		</decision>
+		<mau id="Somma_Parziale" order="1">
+			<parents>Somma_Parziale</parents>
+			<weights>1 1</weights>
+		</mau>
 	</dynamic>
 	<extensions>
 		<genie version="1.0" app="GeNIe 4.1.3402.0 ACADEMIC" name="Veicolo">
@@ -160,13 +172,27 @@
 				<position>625 289 701 335</position>
 				<barchart width="128" height="108" />
 			</node>
-			<node id="Utilità_2">
+			<node id="Utilità_Finale">
 				<name>Utilità Finale</name>
 				<interior color="e5f6f7" />
 				<outline color="000080" />
 				<font color="000000" name="Arial" size="8" />
 				<position>629 386 700 430</position>
 				<barchart width="128" height="64" />
+			</node>
+			<node id="Somma_Parziale">
+				<name>Somma Parziale</name>
+				<interior color="e5f6f7" />
+				<outline color="000080" />
+				<font color="000000" name="Arial" size="8" />
+				<position>430 513 509 545</position>
+			</node>
+			<node id="Somma_Utilità">
+				<name>Somma Utilità</name>
+				<interior color="e5f6f7" />
+				<outline color="000080" />
+				<font color="000000" name="Arial" size="8" />
+				<position>628 503 701 551</position>
 			</node>
 		</genie>
 	</extensions>

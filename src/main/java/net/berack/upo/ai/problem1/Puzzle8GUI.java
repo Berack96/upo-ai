@@ -10,7 +10,7 @@ import javax.swing.JButton;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
-import net.berack.upo.ai.MyPanel;
+import net.berack.upo.ai.gui.MyPanel;
 import net.berack.upo.ai.problem1.Puzzle8.Move;
 
 /**
@@ -67,7 +67,8 @@ public class Puzzle8GUI extends MyPanel {
      */
     public void shuffleGame() {
         do { this.puzzle.shuffle(); } while(!this.puzzle.isSolvable());
-        redraw();
+        this.solution.clear();
+        this.updateAll();
     }
 
     /**
@@ -77,7 +78,7 @@ public class Puzzle8GUI extends MyPanel {
      */
     public void solveGame() {
         this.solution = this.puzzle.solve();
-        this.redraw();
+        this.updateAll();
     }
 
     /**
@@ -86,7 +87,8 @@ public class Puzzle8GUI extends MyPanel {
      * allora verrà evidenziata una tessera con il colore rosso per indicare
      * la mossa migliore da fare per la risoluzione.
      */
-    public void redraw() {
+    @Override
+    public void updateAll() {
         MyComponent zero = null;
 
         for(var arr: this.buttons) {
@@ -101,7 +103,7 @@ public class Puzzle8GUI extends MyPanel {
             }
         }
 
-        higlightNextMove(zero);
+        this.higlightNextMove(zero);
     }
 
     /**
@@ -155,7 +157,7 @@ public class Puzzle8GUI extends MyPanel {
                 if(solution.size() > 0 && solution.remove(0) != move)
                     solution.clear();
 
-                redraw();
+                updateAll();
             });
         }
     }

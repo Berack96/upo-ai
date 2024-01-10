@@ -1,9 +1,12 @@
-package net.berack.upo.ai;
+package net.berack.upo.ai.gui;
+
+import java.awt.Dimension;
 
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 
 import net.berack.upo.ai.decision.PrototypeGUI;
@@ -19,15 +22,15 @@ import net.berack.upo.ai.problem3.LikelihoodWeightingGUI;
  */
 public class MainGUI extends JFrame {
 
+    public static void main(String[] args) {
+        new MainGUI();
+    }
+
     public final Puzzle8GUI Puzzle8GUI = new Puzzle8GUI();
     public final TrisGUI TrisGUI = new TrisGUI();
     public final LikelihoodWeightingGUI LikelihoodWeightingGUI = new LikelihoodWeightingGUI();
     public final PrototypeGUI PrototypeGUI = new PrototypeGUI();
     public final VehicleGUI VehicleGUI = new VehicleGUI();
-
-    public static void main(String[] args) {
-        new MainGUI();
-    }
 
     private final JMenuBar menuBar = new JMenuBar();
 
@@ -41,7 +44,7 @@ public class MainGUI extends JFrame {
         this.setJMenuBar(menuBar);
 
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setSize(400, 400);
+        this.setSize(500, 400);
         this.setResizable(false);
         this.setLocationRelativeTo(null);
         this.setVisible(true);
@@ -74,16 +77,29 @@ public class MainGUI extends JFrame {
         menu.add(vehicle);
 
         menuBar.add(menu);
-        for(var m : menus) menuBar.add(m);
+        for(var m : menus) if(m != null) menuBar.add(m);
     }
 
     /**
      * Cambia il pannello principale con quello passato in input
+     * Nel caso sia un pannello MyDecision allora mette anche uno scroll panel per far si che si
+     * possano vedere tutti i nodi necessari
      * @param panel il pannello da mostrare
      */
     private void setPanel(MyPanel panel) {
-        this.setContentPane(panel);
+        if(panel instanceof MyDecisionPanel) {
+            var scroll = new JScrollPane(panel);
+            scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+            scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+            scroll.getVerticalScrollBar().setUnitIncrement(20);
+            scroll.setPreferredSize(new Dimension(500, 400));
+            this.setContentPane(scroll);
+        }
+        else this.setContentPane(panel);
+
         this.buildMenu(panel.getMenu());
+        panel.updateAll();
+
         this.pack();
         this.invalidate();
         this.validate();
