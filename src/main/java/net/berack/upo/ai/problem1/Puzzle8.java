@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
+import java.util.function.BiFunction;
 
 /**
  * Classe utilizzata per la rappresentazione del problema delle 8 tessere.
@@ -17,6 +18,20 @@ import java.util.Random;
 public class Puzzle8 implements Iterable<Integer> {
     public static final int LENGTH = 3;
     public static final int[] DEFAULT_GOAL = new int[] {1, 2, 3, 4, 5, 6, 7, 8, 0};
+    public static final BiFunction<Puzzle8, Puzzle8, Integer> HEURISTIC_MANHATTAN = (p1, p2) -> {
+        var sum = 0;
+        var n = p1.puzzle.length;
+        var index = new int[n];
+
+        for(var i = 0; i < n; i++) index[p1.puzzle[i]] = i;
+        for(var i = 0; i < n; i++) {
+            var curr = p2.puzzle[i];
+            var i2 = index[curr];
+
+            sum += Math.abs((i / LENGTH) - (i2 / LENGTH)) + Math.abs((i % LENGTH) - (i2 % LENGTH));
+        }
+        return sum;
+    };
 
     /**
      * Possibili movimenti della tessera "vuota"
@@ -250,21 +265,8 @@ public class Puzzle8 implements Iterable<Integer> {
     public List<Move> solve(Puzzle8 goal) {
         if(!this.isSolvable(goal)) return null;
 
-        var aStar = new AStar<Puzzle8, Move>(Puzzle8::availableMoves, (p, m) -> new Puzzle8(p, m))
-            .setHeuristic((p1, p2) -> {
-                var sum = 0;
-                var n = p1.puzzle.length;
-                var index = new int[n];
-
-                for(var i = 0; i < n; i++) index[p1.puzzle[i]] = i;
-                for(var i = 0; i < n; i++) {
-                    var curr = p2.puzzle[i];
-                    var i2 = index[curr];
-
-                    sum += Math.abs((i / LENGTH) - (i2 / LENGTH)) + Math.abs((i % LENGTH) - (i2 % LENGTH));
-                }
-                return sum;
-            });
+        var aStar = new AStar<Puzzle8, Move>(Puzzle8::availableMoves, (p, m) -> new Puzzle8(p, m));
+        aStar.setHeuristic(HEURISTIC_MANHATTAN);
 
         return aStar.solve(this, Objects.requireNonNull(goal));
     }

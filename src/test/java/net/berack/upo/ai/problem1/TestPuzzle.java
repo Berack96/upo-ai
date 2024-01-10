@@ -147,4 +147,18 @@ public class TestPuzzle {
 
         assertEquals(puzzle, goal);
     }
+
+    @Test
+    public void testSolveHard() {
+        var goal = new Puzzle8(Puzzle8.DEFAULT_GOAL);
+        var puzzle = new Puzzle8(0,5,2,4,1,7,3,8,6);
+        var actions = puzzle.solve().toArray(new Puzzle8.Move[0]);
+        for(var move : actions) puzzle.move(move);
+        assertEquals(puzzle, goal);
+
+        puzzle = new Puzzle8(0,8,3,7,5,2,6,1,4);
+        actions = puzzle.solve().toArray(new Puzzle8.Move[0]);
+        for(var move : actions) puzzle.move(move);
+        assertEquals(puzzle, goal);
+    }
 }
