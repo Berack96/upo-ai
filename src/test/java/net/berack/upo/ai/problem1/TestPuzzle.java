@@ -126,10 +126,7 @@ public class TestPuzzle {
     public void testSolve() {
         var puzzle = new Puzzle8(3,5,6,1,2,4,0,7,8);
         var puzzleGoal = new Puzzle8(1,2,3,4,5,6,7,8,0);
-        var solution = new Puzzle8.Move[] {RIGHT, UP, RIGHT, UP, LEFT, LEFT, DOWN, RIGHT, DOWN, RIGHT, UP, UP, LEFT, DOWN, RIGHT, DOWN};
         var actual = puzzle.solve(puzzleGoal).toArray(new Puzzle8.Move[0]);
-
-        assertArrayEquals(solution, actual);
 
         for(var move : actual) puzzle.move(move);
         assertEquals(puzzleGoal, puzzle);

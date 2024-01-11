@@ -26,8 +26,9 @@ public class Puzzle8 implements Iterable<Integer> {
         for(var i = 0; i < n; i++) index[p1.puzzle[i]] = i;
         for(var i = 0; i < n; i++) {
             var curr = p2.puzzle[i];
-            var i2 = index[curr];
+            if(curr == 0) continue;
 
+            var i2 = index[curr];
             sum += Math.abs((i / LENGTH) - (i2 / LENGTH)) + Math.abs((i % LENGTH) - (i2 % LENGTH));
         }
         return sum;
@@ -265,7 +266,7 @@ public class Puzzle8 implements Iterable<Integer> {
     public List<Move> solve(Puzzle8 goal) {
         if(!this.isSolvable(goal)) return null;
 
-        var aStar = new AStar<Puzzle8, Move>(Puzzle8::availableMoves, (p, m) -> new Puzzle8(p, m));
+        var aStar = new AStar<Puzzle8, Move>(Puzzle8::availableMoves, Puzzle8::new);
         aStar.setHeuristic(HEURISTIC_MANHATTAN);
 
         return aStar.solve(this, Objects.requireNonNull(goal));
