@@ -1,5 +1,6 @@
 package net.berack.upo.ai.problem2;
 
+import java.security.SecureRandom;
 import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -17,6 +18,7 @@ public class MiniMax<State, Action, Player> {
     private BiFunction<State, Action, State> transition;
     private BiFunction<State, Player, Integer> playerGain;
     private Function<State, Action[]> actions;
+    private SecureRandom random = new SecureRandom();
 
     /**
      * Crea una nuova istanza dell'algoritmo MiniMax per i giochi a due concorrenti.
@@ -58,7 +60,8 @@ public class MiniMax<State, Action, Player> {
             var nextState = this.transition.apply(state, action);
             var nextValue = this.expectedGain(nextState, player, lookahead-1, false, bestGain);
 
-            if(nextValue > bestGain) {
+            if(nextValue >= bestGain) {
+                if(nextValue == bestGain && !random.nextBoolean()) continue; //added randomicity in the decision if has equal result
                 bestGain = nextValue;
                 best = action;
             }
