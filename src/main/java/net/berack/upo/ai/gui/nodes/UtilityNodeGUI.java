@@ -39,7 +39,7 @@ public class UtilityNodeGUI extends NodeGUI {
 
     @Override
     public void updateNode() {
-        var values = this.net.getNodeValue(this.node);
+        var values = this.getValues();
         var val = (values.length == 1) ? String.format("% 5.2f", values[0]) : " ";
         this.utility.setText(val);
     }

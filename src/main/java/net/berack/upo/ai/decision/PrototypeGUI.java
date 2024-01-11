@@ -21,7 +21,7 @@ public class PrototypeGUI extends MyDecisionPanel {
     };
 
     public PrototypeGUI() {
-        super(SmileLib.getNetworkFrom(PROTOTIPO), NODES);
+        this.buildPanel(SmileLib.getNetworkFrom(PROTOTIPO), NODES);
     }
 
     @Override

@@ -12,6 +12,7 @@ public abstract class NodeGUI extends JPanel {
 
     public final Network net;
     public final int node;
+    private double[] values = null;
 
     /**
      * Salva informazioni essenziali del nodo
@@ -25,6 +26,28 @@ public abstract class NodeGUI extends JPanel {
     protected NodeGUI(Network net, int node) {
         this.net = net;
         this.node = node;
+    }
+
+    /**
+     * Permette di impostare dei valori custom da mostrare.
+     * Dopo la chiamata non verranno modificati i valori a schermo se non
+     * si ha chiamato il metodo updateNode.
+     * 
+     * @param values i valori da mostrare (dovranno essere compresi tra 0 e 1)
+     */
+    public void setValues(double[] values) {
+        for(var val : values) if(val < 0 || val > 1) throw new IllegalArgumentException();
+        this.values = values;
+    }
+
+    /**
+     * Mostra i valori del nodo. Se sono stati passati dei valori custom allora userà quelli,
+     * altrimenti prenderà i valori contenuti all'interno della rete.
+     * @return i valori del nodo
+     */
+    public double[] getValues() {
+        if(this.values != null) return this.values;
+        return this.net.getNodeValue(this.node);
     }
 
     /**

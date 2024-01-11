@@ -1,11 +1,14 @@
 package net.berack.upo.ai.gui;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 
+import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 
@@ -32,6 +35,7 @@ public class MainGUI extends JFrame {
     public final PrototypeGUI PrototypeGUI = new PrototypeGUI();
     public final VehicleGUI VehicleGUI = new VehicleGUI();
 
+    private final Dimension size = new Dimension(500, 400);
     private final JMenuBar menuBar = new JMenuBar();
 
     /**
@@ -44,7 +48,7 @@ public class MainGUI extends JFrame {
         this.setJMenuBar(menuBar);
 
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setSize(500, 400);
+        this.setSize(this.size);
         this.setResizable(false);
         this.setLocationRelativeTo(null);
         this.setVisible(true);
@@ -88,11 +92,15 @@ public class MainGUI extends JFrame {
      */
     private void setPanel(MyPanel panel) {
         if(panel instanceof MyDecisionPanel) {
-            var scroll = new JScrollPane(panel);
+            var temp = new JPanel(new BorderLayout());
+            temp.add(panel, BorderLayout.NORTH);
+            temp.setBorder(BorderFactory.createEmptyBorder(5, 5, 0, 5));
+
+            var scroll = new JScrollPane(temp);
             scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
             scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
             scroll.getVerticalScrollBar().setUnitIncrement(20);
-            scroll.setPreferredSize(new Dimension(500, 400));
+            scroll.setPreferredSize(this.size);
             this.setContentPane(scroll);
         }
         else this.setContentPane(panel);

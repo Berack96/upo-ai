@@ -1,7 +1,6 @@
 package net.berack.upo.ai.gui;
 
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,21 +23,47 @@ import smile.Network;
  */
 public abstract class MyDecisionPanel extends MyPanel {
 
-    public final Network net;
-    private final List<NodeGUI> update = new ArrayList<>();
+    protected Network net;
+    protected final List<NodeGUI> update = new ArrayList<>();
+    private Component[] components = new Component[0];
+
+    /**
+     * Aggiunge dei componenti nel caso siano necessari che verranno mostrati nella prima parte del pannello
+     * @param components i componenti da mostrare (devono essere pari)
+     */
+    protected void setExtraComponents(Component[] components) {
+        if(components.length % 2 != 0) throw new IllegalArgumentException("Must be a an even length array");
+        this.components = components;
+    }
 
     /**
      * Costruisce il dinamicamente da una rete e da una lista di nodi da mostrare.
      * Il risultato sarà già inserito nel pannello e per vedere i valori bisognerà utilizzare il metodo updateAll()
      * @param net la rete da mostrare
-     * @param nodes il sottoinsieme di nodi da mostrare
+     * @param nodes il sottoinsieme di nodi da mostrare o (empty / null) per tutti i nodi
      */
-    protected MyDecisionPanel(Network net, String...nodes) {
+    public void buildPanel(Network net, String...nodes) {
         this.net = net;
-        var layout = new GroupLayout(this);
+        if(this.net == null) return;
 
-        var size = new Dimension(500, 400);
-        this.setSize(size);
+        if(nodes == null || nodes.length == 0)
+            this.buildNodes(this.net.getAllNodes());
+        else {
+            var handles = new int[nodes.length];
+            for(var i = 0; i < nodes.length; i++) handles[i] = this.net.getNode(nodes[i]);
+            this.buildNodes(handles);
+        }
+    }
+
+    /**
+     * Costruisce i nodi passati in input nel pannello
+     * @param handles i nodi da costruire
+     */
+    private void buildNodes(int[] handles) {
+        this.update.clear();
+        this.removeAll();
+
+        var layout = new GroupLayout(this);
         this.setLayout(layout);
         layout.setAutoCreateGaps(true);
 
@@ -47,8 +72,18 @@ public abstract class MyDecisionPanel extends MyPanel {
         var gBarch = layout.createParallelGroup();
         var vGroup = layout.createSequentialGroup();
 
-        for(var node: nodes) {
-            var handle = net.getNode(node);
+        for(var i = 0; i < this.components.length; i += 2) {
+            var comp1 = this.components[i];
+            var comp2 = this.components[i+1];
+
+            gLabel.addComponent(comp1);
+            gBarch.addComponent(comp2);
+            vGroup.addGroup(layout.createParallelGroup()
+                .addComponent(comp1)
+                .addComponent(comp2));
+        }
+
+        for(var handle : handles) {
             var panel = factory.create(handle);
             update.add(panel);
 
@@ -78,7 +113,7 @@ public abstract class MyDecisionPanel extends MyPanel {
      * Utile per cambiare il font in BOLD e aumentarne la grandezza
      * @param component il componente da cambiare il font
      */
-    private void setFont(Component component) {
+    protected void setFont(Component component) {
         var font = component.getFont();
         font = new Font(font.getName(), Font.BOLD, font.getSize() + 2);
         component.setFont(font);

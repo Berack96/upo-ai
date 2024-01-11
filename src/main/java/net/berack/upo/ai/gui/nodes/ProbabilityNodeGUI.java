@@ -2,6 +2,7 @@ package net.berack.upo.ai.gui.nodes;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Label;
 import java.util.function.Consumer;
@@ -68,10 +69,7 @@ public class ProbabilityNodeGUI extends NodeGUI {
             if(action == null) lName.setBorder(null);
             else lName.addActionListener(a -> action.accept(index));
 
-            var size = barchart.getPreferredSize();
-            size.width = 100;
-            size.height = 10;
-            barchart.setPreferredSize(size);
+            barchart.setPreferredSize(new Dimension(100, 10));
             barchart.setBackground(COLORS[i % COLORS.length]);
 
 
@@ -91,8 +89,8 @@ public class ProbabilityNodeGUI extends NodeGUI {
 
     @Override
     public void updateNode() {
-        var values = this.net.getNodeValue(this.node);
-        var evidence = this.net.isEvidence(this.node)? this.net.getEvidence(node) : -1;
+        var values = this.getValues();
+        var evidence = this.net.isEvidence(this.node)? this.net.getEvidence(this.node) : -1;
         var enable = (values.length == this.outcomes.length);
 
         for(var i = 0; i < this.outcomes.length; i++) {

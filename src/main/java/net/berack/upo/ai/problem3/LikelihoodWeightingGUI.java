@@ -1,33 +1,24 @@
 package net.berack.upo.ai.problem3;
 
-import java.awt.Dimension;
+import java.awt.Component;
 import java.awt.FileDialog;
-import java.awt.Font;
-import java.util.Collection;
 
-import javax.swing.BorderFactory;
-import javax.swing.GroupLayout;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
-import javax.swing.JPanel;
 import javax.swing.JSeparator;
-import javax.swing.JTextArea;
 
-import net.berack.upo.ai.gui.MyPanel;
+import net.berack.upo.ai.gui.MyDecisionPanel;
 
 /**
  * Classe usata per far vedere il risultato di una run di lw su un network
  * @author Berack
  */
-public class LikelihoodWeightingGUI extends MyPanel {
+public class LikelihoodWeightingGUI extends MyDecisionPanel {
 
     private LikelihoodWeighting lw = null;
-    private OutcomeChartGUI[] chartGUI = null;
-
-    private final JPanel scroll = new JPanel(); // tried using JScrollPane but nothing shows up
     private int totalRuns = 1000;
 
     /**
@@ -35,8 +26,13 @@ public class LikelihoodWeightingGUI extends MyPanel {
      * Siccome non c'è nessun network, il pannello sarà vuoto finchè non si apriranno dei network
      */
     public LikelihoodWeightingGUI() {
-        this.scroll.setPreferredSize(new Dimension(500, 400));
-        this.add(this.scroll);
+        var totLabel = new JLabel("Total Runs");
+        var totValue = new JComboBox<>(new Integer[] {this.totalRuns, 5 * this.totalRuns, 10 * this.totalRuns, 20 * this.totalRuns});
+        totValue.addItemListener(a -> this.totalRuns = (Integer) totValue.getSelectedItem());
+
+        this.setFont(totLabel);
+        this.setExtraComponents(new Component[] { totLabel, totValue });
+        this.buildPanel(null);
     }
 
     /**
@@ -66,7 +62,15 @@ public class LikelihoodWeightingGUI extends MyPanel {
         try {
             var net = SmileLib.getNetworkFrom(fileName);
             this.lw = new LikelihoodWeighting(net);
-            this.chartGUI = null;
+            this.buildPanel(net);
+            var totLabel = new JLabel("Total Runs");
+            var totValue = new JComboBox<>(new Integer[] {this.totalRuns, 5 * this.totalRuns, 10 * this.totalRuns, 20 * this.totalRuns});
+            totValue.addItemListener(a -> this.totalRuns = (Integer) totValue.getSelectedItem());
+            this.setFont(totLabel);
+
+            this.add(totLabel);
+            this.add(totValue);
+
             this.updateAll();
         } catch (Exception e) {
             e.printStackTrace();
@@ -81,93 +85,11 @@ public class LikelihoodWeightingGUI extends MyPanel {
         if(this.lw == null) return;
 
         this.lw.updateNetwork(totalRuns);
-        var nodes = this.lw.getAllNodes();
-
-        if(chartGUI == null) buildPanel(nodes);
-
-        var i = 0;
-        for(var node : nodes) chartGUI[i++].updateValues(node.values, node.evidence);
-
-        this.invalidate();
-        this.validate();
-        this.repaint();
-    }
-
-    /**
-     * Crea il pannello da zero usando i nodi passati in input come valori
-     * @param nodes i nodi da mostrare
-     */
-    private void buildPanel(Collection<NetworkNode> nodes) {
-        var panel = new JPanel();
-        var layout = new GroupLayout(panel);
-
-        panel.setLayout(layout);
-        layout.setAutoCreateGaps(true);
-
-        var gLabel = layout.createParallelGroup();
-        var gBarch = layout.createParallelGroup();
-        var vGroup = layout.createSequentialGroup();
-
-        var totLabel = new JLabel("Total Runs");
-        var totValue = new JComboBox<>(new Integer[] {this.totalRuns, 5 * this.totalRuns, 10 * this.totalRuns, 20 * this.totalRuns});
-        totValue.addItemListener(a -> this.totalRuns = (Integer) totValue.getSelectedItem());
-
-        var font = totLabel.getFont();
-        font = new Font(font.getName(), Font.BOLD, font.getSize() + 2);
-        totLabel.setFont(font);
-
-        gLabel.addComponent(totLabel);
-        gBarch.addComponent(totValue);
-        vGroup.addGroup(layout.createParallelGroup()
-            .addComponent(totLabel)
-            .addComponent(totValue));
-
-        this.chartGUI = new OutcomeChartGUI[nodes.size()];
-        var i = 0;
-
-        for(var node : nodes) {
-            var net = node.net;
-            var handle = node.handle;
-
-            var label = new JTextArea(node.name);
-            label.setEditable(false);
-            label.setLineWrap(true);
-            label.setWrapStyleWord(true);
-            label.setOpaque(false);
-            label.setBorder(BorderFactory.createEmptyBorder());
-
-            var barch = new OutcomeChartGUI(node.outcomes, e -> {
-                if(net.isEvidence(handle) && net.getEvidence(handle) == e)
-                    net.clearEvidence(handle);
-                else net.setEvidence(handle, e);
-                this.updateAll();
-            });
-            this.chartGUI[i++] = barch;
-
-            font = label.getFont();
-            font = new Font(font.getName(), Font.BOLD, font.getSize() + 2);
-            label.setFont(font);
-
-            gLabel.addComponent(label);
-            gBarch.addComponent(barch);
-            vGroup.addGroup(layout.createParallelGroup()
-                .addComponent(label)
-                .addComponent(barch));
+        for(var node : this.update) {
+            var values = this.lw.getNodeValue(node.node);
+            node.setValues(values);
+            node.updateNode();
         }
-
-        var hGroup = layout.createSequentialGroup();
-        hGroup.addGroup(gLabel).addGroup(gBarch);
-
-        layout.setVerticalGroup(vGroup);
-        layout.setHorizontalGroup(hGroup);
-
-        var sizes = this.scroll.getPreferredSize();
-        sizes.height = panel.getMinimumSize().height;
-        sizes.width -= 10;
-        panel.setPreferredSize(sizes);
-
-        this.scroll.removeAll();
-        this.scroll.add(panel);
     }
 
     @Override

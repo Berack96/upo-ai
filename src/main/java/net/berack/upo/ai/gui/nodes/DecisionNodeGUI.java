@@ -60,7 +60,7 @@ public class DecisionNodeGUI extends NodeGUI {
     @Override
     public void updateNode() {
         var selected = this.net.isEvidence(this.node)? this.net.getEvidence(this.node) : -1;
-        var values = this.net.getNodeValue(this.node);
+        var values = this.getValues();
         var max = -1;
         if(values.length == this.buttons.length) {
             max = 0;

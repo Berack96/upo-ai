@@ -23,7 +23,7 @@ public class VehicleGUI extends MyDecisionPanel {
     };
 
     public VehicleGUI() {
-        super(SmileLib.getNetworkFrom(VEICOLO), NODES);
+        this.buildPanel(SmileLib.getNetworkFrom(VEICOLO), NODES);
     }
 
     @Override
