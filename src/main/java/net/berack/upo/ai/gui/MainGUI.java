@@ -2,9 +2,11 @@ package net.berack.upo.ai.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.GridBagLayout;
 
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -46,6 +48,11 @@ public class MainGUI extends JFrame {
         super("Progetto per AI");
         this.buildMenu();
         this.setJMenuBar(menuBar);
+
+        var label = new JLabel("Use the menù 'view' to choose what to do");
+        var panel = new JPanel(new GridBagLayout());
+        panel.add(label);
+        this.setContentPane(panel);
 
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setSize(this.size);

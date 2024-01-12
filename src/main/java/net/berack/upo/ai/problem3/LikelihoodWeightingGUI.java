@@ -2,12 +2,14 @@ package net.berack.upo.ai.problem3;
 
 import java.awt.Component;
 import java.awt.FileDialog;
+import java.awt.GridBagLayout;
 
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JSeparator;
 
 import net.berack.upo.ai.gui.MyDecisionPanel;
@@ -33,6 +35,10 @@ public class LikelihoodWeightingGUI extends MyDecisionPanel {
         this.setFont(totLabel);
         this.setExtraComponents(new Component[] { totLabel, totValue });
         this.buildPanel(null);
+
+        var label = new JLabel("Use the menù 'File' to open a net");
+        this.setLayout(new GridBagLayout());
+        this.add(label);
     }
 
     /**
@@ -98,20 +104,28 @@ public class LikelihoodWeightingGUI extends MyDecisionPanel {
 
         var open = new JMenuItem("Open");
         open.addActionListener(action -> this.openFile());
+        menu.add(open);
+        menu.add(new JSeparator());
 
         var nets = new JMenuItem[3];
         nets[0] = new JMenuItem("Alarm net");
         nets[0].addActionListener(action -> this.openFile("lw/Alarm.xdsl"));
-
         nets[1] = new JMenuItem("WetGrass net");
         nets[1].addActionListener(action -> this.openFile("lw/WetGrass.xdsl"));
-
         nets[2] = new JMenuItem("Malaria net");
         nets[2].addActionListener(action -> this.openFile("lw/Malaria.xdsl"));
 
-        menu.add(open);
-        menu.add(new JSeparator());
         for(var net : nets) menu.add(net);
+        menu.add(new JSeparator());
+
+        var item = new JMenuItem("Help");
+        item.addActionListener(a -> JOptionPane.showMessageDialog(this,
+            "Here you can see the likleihood weighting algoritm.\n"
+            + "To do it you have to load a net from the samples provided,\n"
+            + "or you can open a custom net.\n\n"
+            + "NOTE: this algorithm do not support decision nodes yet"
+        ));
+        menu.add(item);
 
         return menu;
     }

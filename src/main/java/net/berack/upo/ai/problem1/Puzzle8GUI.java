@@ -9,6 +9,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JSeparator;
 
 import net.berack.upo.ai.gui.MyPanel;
 import net.berack.upo.ai.problem1.Puzzle8.Move;
@@ -165,13 +167,24 @@ public class Puzzle8GUI extends MyPanel {
     @Override
     public JMenu getMenu() {
         var menu = new JMenu("Game");
-        var item1 = new JMenuItem("Shuffle");
-        item1.addActionListener(action -> this.shuffleGame());
-        menu.add(item1);
+        var item = new JMenuItem("Shuffle");
+        item.addActionListener(action -> this.shuffleGame());
+        menu.add(item);
 
-        var item2 = new JMenuItem("Show solution");
-        item2.addActionListener(action -> this.solveGame());
-        menu.add(item2);
+        item = new JMenuItem("Show solution");
+        item.addActionListener(action -> this.solveGame());
+        menu.add(item);
+
+        menu.add(new JSeparator());
+
+        item = new JMenuItem("Help");
+        item.addActionListener(a -> JOptionPane.showMessageDialog(this,
+            "This is a recreation of the game of the 8 tiles\n"
+            + "To win the game you must sort the tiles in ascending order\n"
+            + "with the empty tile at the end.\n"
+            + "The empty space is used to move all the other tiles."
+        ));
+        menu.add(item);
 
         return menu;
     }

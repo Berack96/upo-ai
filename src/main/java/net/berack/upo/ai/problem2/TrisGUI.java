@@ -9,6 +9,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JSeparator;
 
 import net.berack.upo.ai.gui.MyPanel;
@@ -138,12 +139,11 @@ public class TrisGUI extends MyPanel {
     @Override
     public JMenu getMenu() {
         var menu = new JMenu("Game");
-        var item1 = new JMenuItem("Reset");
-        item1.addActionListener(action -> this.reset());
-        menu.add(item1);
+        var item = new JMenuItem("Reset");
+        item.addActionListener(action -> this.reset());
+        menu.add(item);
 
-        var separator = new JSeparator();
-        menu.add(separator);
+        menu.add(new JSeparator());
 
         var item2 = new JCheckBoxMenuItem("AI Enabled");
         item2.setSelected(this.ai != null);
@@ -153,6 +153,19 @@ public class TrisGUI extends MyPanel {
         this.aiFirst = new JCheckBoxMenuItem("AI First");
         this.aiFirst.setSelected(false);
         menu.add(this.aiFirst);
+
+        menu.add(new JSeparator());
+
+        item = new JMenuItem("Help");
+        item.addActionListener(a -> JOptionPane.showMessageDialog(this,
+            "This is a recreation of the game of Tris\n"
+            + "If you start first you will have the X symbol, otherwise you will have the O symbol.\n"
+            + "To win the game you must make 3 consecutive symbols. (horizontally/vertically/diagonally)\n"
+            + "You will have an opponent, AI based or human (you can choose it in the menù),\n"
+            + "that have the same objective as you have, but of opposite symbol.\n"
+            + "When someone wins the game is stopped and the tris is highlighted in red"
+        ));
+        menu.add(item);
 
         return menu;
     }
