@@ -14,7 +14,7 @@ Quando viene istanziata la classe A* vengono richieste varie funzioni:
 - Transizione: funzione di transizione da uno stato ad un altro usando una azione
 - Azioni: dato uno stato deve restituire tutte le azioni disponibili
 - Costo: che indica quanto "spendo" per passare da uno stato ad un altro (opzionale dato che di default è impostata alla funzione costante ad 1)
-- Euristica: stima per difetto quanto costa passare da uno stato a quello goal (opzionale dato che di deafault è impostata alla funzione costante a 0).
+- Euristica: stima per difetto quanto costa passare da uno stato a quello goal (opzionale dato che di default è impostata alla funzione costante a 0).
 
 #### Puzzle8
 Per la risoluzione del gioco è stata prima implementata la classe Puzzle8 che contiene i valori e le regole di esso.\
@@ -26,7 +26,7 @@ Tra i metodi della classe ci sono:\
 
 Quest'ultima utilizza la classe A* per avere la lista di azioni.
 Nel caso del Puzzle non viene impostata la funzione di costo dato che il costo, per passare da uno stato ad un altro eseguendo un'azione, è sempre di 1.
-Mentre per la funzione euristica è stata utilizza la distanza di Manhattan per stimare il costo di uno stato rispetto allo stato goal.
+Mentre per la funzione euristica è stata utilizzata la distanza di Manhattan per stimare il costo di uno stato rispetto allo stato goal.
 
 ## Tris
 package: [net.berack.upo.ai.problem2](https://github.com/Berack96/upo-ai/tree/main/src/main/java/net/berack/upo/ai/problem2)
@@ -64,7 +64,7 @@ Infine viene calcolata la probabilità di ogni stato di ogni nodo di verificarsi
 #### SmileLib
 Classe statica che serve per il caricamento della libreria jSmile.
 In questo file viene creata una variabile di ambiente per Java in cui viene indicato dove la JVM può trovare il file binario della libreria jSmile.\
-Oltre a questo ha dei metodo utili per la lettura di un Network sia come risorsa che come file.
+Oltre a questo ha dei metodi utili per la lettura di un Network sia come risorsa che come file.
 
 #### NetworkNode
 Classe di appoggio usata per il calcolo delle probabilità dell'algoritmo LW. Usata principalmente per evitare di ricreare i dati dei nodi ogni volta che viene richiamata la libreria e per avere dei metodi per la ricerca dei valori corretti da prendere nella CPT in base alle evidenze o sample impostati nei nodi padre.
@@ -76,21 +76,21 @@ Esercizio in cui bisogna creare una rete bayesiana per il supporto alla decision
 
 In essa vengono richieste tre decisioni si/no: Effettuare una ricerca di mercato, Migliorare la qualità del prototipo, Mandare in produzione il prodotto; ognuna di esse ha collegato un valore di costo (e quindi con valore negativo) che viene preso in considerazione solamente in caso di decisione positiva.\
 L'unico nodo che può far aumentare l'utilità è "Valore ricavo" che viene assegnato in base alla probabilità di profitto e il fatto che si abbia fatto partire la produzione.\
-È stato creato un altro nodo utilità denomintato "Valore profitto" che prende in input tutti i nodi utilità per farene una somma; esso viene usato solamente nella rappresentazione della rete per semplicità nel vedere il risultato.\
+È stato creato un altro nodo utilità denominato "Valore profitto" che prende in input tutti i nodi utilità per farne una somma; esso viene usato solamente nella rappresentazione della rete per semplicità nel vedere il risultato.\
 La rete ha un nodo di cui si può inserire il valore che è "Ricerca di mercato" ed esso viene contato nel calcolo solamente se si è scelto di effettuare la ricerca.\
 Il nodo "Profitto" è stato dichiarato NoisyMax dato che in questo modo risulta più semplice inserire i valori, dando più profitto nel caso in cui la domanda sia alta o in caso in cui la qualità sia ottima.
 
-La rete ha una sua rappresentazione grafica nel progetto, nella quale è possibile interagire inserendo le decisioni (quella migliore per la rete viene indicata con il font in grasetto) per poi avere il valore dell'utilità finale indicato in rosso.
+La rete ha una sua rappresentazione grafica nel progetto, nella quale è possibile interagire inserendo le decisioni (quella migliore per la rete viene indicata con il font in grassetto) per poi avere il valore dell'utilità finale indicato in rosso.
 
 ## Veicolo
 file: [src/main/resources/Veicolo.xdsl](https://github.com/Berack96/upo-ai/blob/main/src/main/resources/Veicolo.xdsl) \
 file: [src/main/resources/Veicolo_unrolled.xdsl](https://github.com/Berack96/upo-ai/blob/main/src/main/resources/Veicolo%20unrolled.xdsl)
 
-Esercizio in cui creare una rete bayesiana per il supporto alla decisione di un veicolo autonomo in modo che rimanga al centro della corsia anche quando il sensore è guasto o restiuisce valori scorretti.
+Esercizio in cui creare una rete bayesiana per il supporto alla decisione di un veicolo autonomo in modo che rimanga al centro della corsia anche quando il sensore è guasto o restituisce valori scorretti.
 
 La prima cosa che si nota della rete è che si trova su un Temporal Plate di 5 time steps. In essa si possono notare due gruppi di nodi: uno riguardante l'accuratezza del sensore e uno riguardante la posizione del veicolo. \
 Nel gruppo dell'accuratezza ci sono dei nodi per il controllo dell'ambiente (stato del terreno e meteo) che influenzano l'accuratezza e il fatto che il sensore si possa guastare. I nodi Guasto e Accuratezza sono stati dichiarati come NoisyMax sempre per il fatto che è più semplice l'inserimento dei valori di probabilità. \
 La posizione del Veicolo non è conosciuta e per questo viene rappresentata come un nodo di probabilità; essa viene legata ad un nodo di utilità dato che il nostro obiettivo è di rimanere al centro. \
-Le decisioni che deveno essere prese sono rappresentate dal nodo Comando, che va ad influenzare la posizione del veicolo. Essendo il nodo su un piano temporale di 5 steps, verranno richieste 5 decisioni. \
-Oltre ai nodi del piano temporale sono stati introdotti dei nodi come Term Conditions; questo perchè altrimenti l'ultima decisione non avrebbe avuto conseguenze per il nostro modello.\
+Le decisioni che devono essere prese sono rappresentate dal nodo Comando, che va ad influenzare la posizione del veicolo. Essendo il nodo su un piano temporale di 5 steps, verranno richieste 5 decisioni. \
+Oltre ai nodi del piano temporale sono stati introdotti dei nodi come Term Conditions; questo perché altrimenti l'ultima decisione non avrebbe avuto conseguenze per il nostro modello.\
 Tutti gli altri nodi inseriti come utilità vengono usati solamente per il calcolo totale dell'utilità e nella rappresentazione della rete per vedere il risultato.
