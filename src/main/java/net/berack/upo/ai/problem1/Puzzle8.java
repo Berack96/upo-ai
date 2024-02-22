@@ -25,9 +25,9 @@ public class Puzzle8 implements Iterable<Integer> {
 
         for(var i = 0; i < n; i++) index[p1.puzzle[i]] = i;
         for(var i = 0; i < n; i++) {
-            var curr = p2.puzzle[i];
-            if(curr == 0) continue;
+            if(i == p2.blank) continue;
 
+            var curr = p2.puzzle[i];
             var i2 = index[curr];
             sum += Math.abs((i / LENGTH) - (i2 / LENGTH)) + Math.abs((i % LENGTH) - (i2 % LENGTH));
         }
@@ -117,7 +117,28 @@ public class Puzzle8 implements Iterable<Integer> {
      */
     public int get(int x, int y) {
         if(x >= LENGTH) throw new IndexOutOfBoundsException();
-        return puzzle[y * LENGTH + x];
+        return get(y * LENGTH + x);
+    }
+
+    /**
+     * Permette di ricevere in input il valore della coordinata passata in input.
+     * Il valore in input ha formato flat2D, ovvero è un numero che rappresenta una coordinata 2D in uno spazio finito.
+     * La formula generale per calcolare il numero è la seguente: x + (MAX_X + 1) * y.
+     * Quindi nel nostro caso si può calcolare la formula con: x + Puzzle8.LENGTH * y.
+     * NOTA: non usare questo metodo se non si ha capito che cosa significhi. Piuttosto utilizzare {@link #get(int, int)}
+     * @param flat2D la rappresentazione monodimensionale della coordinata 2D
+     * @return il valore in quel punto del puzzle.
+     */
+    public int get(int flat2D) {
+        return puzzle[flat2D];
+    }
+
+    /**
+     * Permette di avere la posizione della tessera vuota in formato flat2D utilizzabile nel metodo {@link #get(int)}
+     * @return la posizione dello 0 o tessera vuota
+     */
+    public int getBlankPosition() {
+        return this.blank;
     }
 
     /**
@@ -201,13 +222,14 @@ public class Puzzle8 implements Iterable<Integer> {
         var rand = new Random();
         for(var i = this.puzzle.length - 1; i > 0; i--) {
             var j = rand.nextInt(i + 1);
-
             var temp = this.puzzle[i];
             this.puzzle[i] = this.puzzle[j];
             this.puzzle[j] = temp;
-
-            if(this.puzzle[i] == 0) this.blank = i;
         }
+
+        for(var i = 0; i < this.puzzle.length; i++)
+            if(this.puzzle[i] == 0)
+                this.blank = i;
     }
 
     /**

@@ -19,7 +19,7 @@ public class TestPuzzle {
         var puzzle = new Puzzle8(goalArray);
 
         for(var i = 0; i < goalArray.length; i++)
-            assertEquals(goalArray[i], puzzle.get(i%3, i/3), "Error in initialization");
+            assertEquals(goalArray[i], puzzle.get(i), "Error in initialization");
 
         var puzzle2 = new Puzzle8(goalArray);
         assertEquals(puzzle, puzzle2, "Error in equality");
@@ -71,8 +71,7 @@ public class TestPuzzle {
         var puzzle = new Puzzle8(goalArray);
         var moves = new Puzzle8.Move[] {RIGHT, DOWN, LEFT, UP, DOWN, RIGHT, UP, LEFT};
 
-        for(var move : moves)
-            puzzle = new Puzzle8(puzzle, move);
+        for(var move : moves) puzzle = new Puzzle8(puzzle, move);
         assertEquals(new Puzzle8(goalArray), puzzle, "After useless moves the puzzle must be the same as before!");
     }
 
@@ -157,5 +156,22 @@ public class TestPuzzle {
         actions = puzzle.solve().toArray(new Puzzle8.Move[0]);
         for(var move : actions) puzzle.move(move);
         assertEquals(puzzle, goal);
+    }
+
+    @Test
+    public void testShuffleBlankPosition() {
+        var puzzle = new Puzzle8(Puzzle8.DEFAULT_GOAL);
+        var tot = Puzzle8.LENGTH * Puzzle8.LENGTH;
+
+        for(var i = 0; i < 1000; i++) {
+            puzzle.shuffle();
+
+            var blank = 10;
+            for(var j = 0; j < tot; j++)
+                if(puzzle.get(j) == 0)
+                    blank = j;
+
+            assertEquals(blank, puzzle.getBlankPosition());
+        }
     }
 }

@@ -22,9 +22,6 @@ public class AStar<State, Action> {
     private BiFunction<State, State, Integer> heuristic;
     private TriFunction<State, State, Action, Integer> cost;
 
-    private int lastStateVisitedCount = 0;
-    private int lastStateTotalCount = 0;
-
     /**
      * Crea una istanza dell'algoritmo A* con una funzione di azioni possibili da compiere dato uno stato
      * e una funzione di transizione che dato uno stato permette di raggiungerne un'altro tramite un'azione.
@@ -95,16 +92,11 @@ public class AStar<State, Action> {
         Objects.requireNonNull(initial);
         Objects.requireNonNull(goal);
 
-        this.lastStateVisitedCount = 0;
-        this.lastStateTotalCount = 1;
-
         NodeState found = null;
         var list = new PriorityQueue<NodeState>();
         list.add(new NodeState(null, initial, null, 0, 0));
 
         while(list.size() > 0) {
-            this.lastStateVisitedCount += 1;
-
             var current = list.poll();
             if(current.state.equals(goal)) {
                 found = current;
@@ -112,8 +104,6 @@ public class AStar<State, Action> {
             }
 
             for(var action : this.actions.apply(current.state)) try {
-
-                this.lastStateTotalCount += 1;
                 var next = this.transition.apply(current.state, action);
                 var cost = this.cost.apply(current.state, next, action);
                 var dist = this.heuristic.apply(next, goal);
@@ -137,16 +127,6 @@ public class AStar<State, Action> {
         return path;
     }
 
-
-    public int lastStateVisitedCount() {
-        return this.lastStateVisitedCount;
-    }
-
-    public int lastStateTotalCount() {
-        return this.lastStateTotalCount;
-    }
-
-
     /**
      * Classe privata per mantenere i dati all'interno della PriorityQueue.
      * Non è stata messa statica dato che ho bisogno dello stato e dell'azione.
@@ -168,7 +148,7 @@ public class AStar<State, Action> {
 
         @Override
         public int compareTo(NodeState other) {
-            return this.total - other.total;
+            return Integer.compare(this.total, other.total);
         }
     }
 
